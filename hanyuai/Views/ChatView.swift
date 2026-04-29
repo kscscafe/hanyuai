@@ -1,5 +1,6 @@
 import SwiftUI
 import UIKit
+import FirebaseAnalytics
 
 struct ChatView: View {
     let character: ChatCharacter
@@ -10,6 +11,7 @@ struct ChatView: View {
     @State private var showPromoCode = false
     @State private var openingLine: String? = nil
     @State private var characterState: CharacterState = CharacterState()
+    @State private var showConsent: Bool = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -86,9 +88,16 @@ struct ChatView: View {
         .sheet(isPresented: $showPromoCode) {
             PromoCodeView(session: session)
         }
+        .sheet(isPresented: $showConsent) {
+            AIConsentView()
+        }
         .onAppear {
             prepareOpeningLine()
             refreshCharacterState()
+            // AI 利用同意を未取得なら、最初に同意モーダルを出す
+            if !AIConsentManager.shared.isAIConsentGiven {
+                showConsent = true
+            }
         }
         .onChange(of: session.messages.count) { _, _ in
             refreshCharacterState()
@@ -157,6 +166,7 @@ struct ChatView: View {
         let text = inputText
         inputText = ""
         session.addMessage(role: "user", content: text)
+        Analytics.logEvent("chat_message_sent", parameters: ["character": character.rawValue])
         isLoading = true
 
         // OpenAI へは直近10件のみ送る（コンテキスト肥大防止）

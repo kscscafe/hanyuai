@@ -8,7 +8,15 @@
       "Bash(awk '/-- iOS 26\\\\.2 --/{flag=1;next} /^--/{flag=0} flag')",
       "Bash(open -a Simulator --args -CurrentDeviceUDID 72EFD04A-86E8-4969-B415-7B5DD44396C0)",
       "Bash(git config *)",
-      "Bash(git add *)"
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git remote *)",
+      "Bash(echo \"exit=$?\")",
+      "Bash(GIT_TRACE_PACKET=0 git push -u origin main)",
+      "Bash(xcodebuild -scheme hanyuai -project hanyuai.xcodeproj -configuration Debug -destination 'generic/platform=iOS Simulator' -resolvePackageDependencies)",
+      "Bash(/usr/libexec/PlistBuddy -c 'Print :BUNDLE_ID' /Users/ksugizaki/Documents/20_Practice/hanyuai/hanyuai/GoogleService-Info.plist)",
+      "Bash(/usr/libexec/PlistBuddy -c 'Print :PROJECT_ID' /Users/ksugizaki/Documents/20_Practice/hanyuai/hanyuai/GoogleService-Info.plist)",
+      "Bash(/usr/libexec/PlistBuddy -c 'Print :GOOGLE_APP_ID' /Users/ksugizaki/Documents/20_Practice/hanyuai/hanyuai/GoogleService-Info.plist)"
     ]
   }
 }

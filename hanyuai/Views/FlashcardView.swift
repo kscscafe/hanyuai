@@ -5,6 +5,7 @@
 //  1枚のフラッシュカード。タップで表裏フリップ。
 
 import SwiftUI
+import FirebaseAnalytics
 
 struct FlashcardView: View {
     let word: Word
@@ -26,8 +27,12 @@ struct FlashcardView: View {
                 isFlipped.toggle()
             }
         }
-        .onChange(of: word) { _, _ in
+        .onAppear {
+            Analytics.logEvent("flashcard_viewed", parameters: ["level": word.level.label])
+        }
+        .onChange(of: word) { _, newWord in
             isFlipped = false
+            Analytics.logEvent("flashcard_viewed", parameters: ["level": newWord.level.label])
         }
     }
 
@@ -180,7 +185,11 @@ struct FlashcardView: View {
             .background(Circle().fill(Color.white.opacity(0.10)))
             .contentShape(Circle())
             .onTapGesture {
+                let willAdd = !isFav
                 favorites.toggle(word)
+                if willAdd {
+                    Analytics.logEvent("word_favorited", parameters: nil)
+                }
             }
     }
 

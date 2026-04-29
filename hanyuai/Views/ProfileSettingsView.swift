@@ -26,6 +26,21 @@ struct ProfileSettingsView: View {
                 } footer: {
                     Text("入力した内容はAIチューターが会話で参照します。")
                 }
+
+                Section("データについて") {
+                    Text("アプリを削除すると、端末内の学習データはすべて削除されます。サーバーへの保存はありません。")
+                        .font(.footnote)
+                        .foregroundColor(.secondary)
+                }
+
+                Section("法的情報") {
+                    Link(destination: URL(string: "https://kscscafe.github.io/hanyuai-support/privacy.html")!) {
+                        externalLinkRow(title: "プライバシーポリシー")
+                    }
+                    Link(destination: URL(string: "https://kscscafe.github.io/hanyuai-support/terms.html")!) {
+                        externalLinkRow(title: "利用規約")
+                    }
+                }
             }
             .navigationTitle("プロフィール")
             .navigationBarTitleDisplayMode(.inline)
@@ -56,6 +71,18 @@ struct ProfileSettingsView: View {
         profile.favoriteFood = favoriteFood.trimmingCharacters(in: .whitespacesAndNewlines)
         profile.studyPurpose = studyPurpose.trimmingCharacters(in: .whitespacesAndNewlines)
         dismiss()
+    }
+
+    /// Safari で開く外部リンクの行レイアウト。
+    private func externalLinkRow(title: String) -> some View {
+        HStack {
+            Text(title)
+                .foregroundColor(.primary)
+            Spacer()
+            Image(systemName: "arrow.up.forward.square")
+                .foregroundColor(.secondary)
+                .font(.footnote)
+        }
     }
 }
 

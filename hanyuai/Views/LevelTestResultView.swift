@@ -5,6 +5,7 @@
 //  レベル診断テストの結果画面。
 
 import SwiftUI
+import FirebaseAnalytics
 
 struct LevelTestResultView: View {
     @ObservedObject var viewModel: LevelTestViewModel
@@ -22,6 +23,12 @@ struct LevelTestResultView: View {
         .scrollContentBackground(.hidden)
         .navigationTitle("診断結果")
         .navigationBarTitleDisplayMode(.inline)
+        .onAppear {
+            Analytics.logEvent(
+                "level_test_completed",
+                parameters: ["result": viewModel.recommendedLevel.label]
+            )
+        }
     }
 
     // MARK: - 総合スコア
