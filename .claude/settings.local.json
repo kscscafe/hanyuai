@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(vercel --version)",
+      "Bash(xcodebuild -list -project hanyuai.xcodeproj)",
+      "Bash(xcodebuild -scheme hanyuai -project hanyuai.xcodeproj -configuration Debug -destination 'generic/platform=iOS Simulator' build)",
+      "Bash(xcrun simctl *)",
+      "Bash(awk '/-- iOS 26\\\\.2 --/{flag=1;next} /^--/{flag=0} flag')",
+      "Bash(open -a Simulator --args -CurrentDeviceUDID 72EFD04A-86E8-4969-B415-7B5DD44396C0)",
+      "Bash(git config *)",
+      "Bash(git add *)"
+    ]
+  }
+}

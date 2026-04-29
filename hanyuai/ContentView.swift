@@ -6,16 +6,30 @@
 //
 
 import SwiftUI
+import AppTrackingTransparency
 
 struct ContentView: View {
+    @StateObject private var favorites = FavoritesStore()
+    @StateObject private var chatSession = ChatSession()
+    @ObservedObject private var profile = UserProfile.shared
+
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        Group {
+            if profile.isOnboardingCompleted {
+                HomeView()
+                    .environmentObject(favorites)
+                    .environmentObject(chatSession)
+            } else {
+                OnboardingView()
+            }
         }
-        .padding()
+        .onAppear {
+            // 起動直後すぎるとシステム側の準備が整っておらずダイアログが
+            // 出ないことがあるため、1秒遅延させる
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                ATTrackingManager.requestTrackingAuthorization { _ in }
+            }
+        }
     }
 }
 
