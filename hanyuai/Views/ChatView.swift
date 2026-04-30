@@ -13,6 +13,10 @@ struct ChatView: View {
     @State private var characterState: CharacterState = CharacterState()
     @State private var showConsent: Bool = false
 
+    private var currentMessages: [ChatMessage] {
+        session.messagesByCharacter[character.rawValue] ?? []
+    }
+
     var body: some View {
         VStack(spacing: 0) {
             // ターン数表示 + 関係性インジケーター
@@ -44,10 +48,10 @@ struct ChatView: View {
                 ScrollView {
                     LazyVStack(spacing: 12) {
                         // 開幕セリフ（その日すでにチャットしている場合は非表示）
-                        if session.messages.isEmpty, let line = openingLine {
+                        if currentMessages.isEmpty, let line = openingLine {
                             GreetingBubble(character: character, text: line)
                         }
-                        ForEach(session.messages) { message in
+                        ForEach(currentMessages) { message in
                             MessageBubble(message: message, character: character)
                                 .id(message.id)
                         }
@@ -57,8 +61,8 @@ struct ChatView: View {
                     }
                     .padding(16)
                 }
-                .onChange(of: session.messages.count) { _, _ in
-                    if let last = session.messages.last {
+                .onChange(of: currentMessages.count) { _, _ in
+                    if let last = currentMessages.last {
                         withAnimation { proxy.scrollTo(last.id, anchor: .bottom) }
                     }
                 }
@@ -92,6 +96,8 @@ struct ChatView: View {
             AIConsentView()
         }
         .onAppear {
+            // キャラ別履歴を使うため、レガシーな共有 messages のみクリアする（per-character 履歴は維持）
+            session.clearMessages()
             prepareOpeningLine()
             refreshCharacterState()
             // AI 利用同意を未取得なら、最初に同意モーダルを出す
@@ -99,7 +105,7 @@ struct ChatView: View {
                 showConsent = true
             }
         }
-        .onChange(of: session.messages.count) { _, _ in
+        .onChange(of: currentMessages.count) { _, _ in
             refreshCharacterState()
         }
     }
@@ -139,13 +145,11 @@ struct ChatView: View {
         characterState = CharacterState.load(for: character.rawValue)
     }
 
-    /// その日まだ会話していない場合のみ、stage と最終会話日時に応じた開幕セリフを用意する。
+    /// stage と最終会話日時に応じた開幕セリフを用意する。
+    /// `openingMessage(...)` 自体が「当日複数回目」「3日以上空き」などのバリエーションを内包しているため、
+    /// ChatView を開くたびにその時点に最も合うセリフを生成する。
     private func prepareOpeningLine() {
         let state = CharacterState.load(for: character.rawValue)
-        if let last = state.lastTalkedAt, Calendar.current.isDateInToday(last) {
-            openingLine = nil
-            return
-        }
         openingLine = character.openingMessage(
             stage: state.stage,
             lastTalkedAt: state.lastTalkedAt,
@@ -165,12 +169,12 @@ struct ChatView: View {
 
         let text = inputText
         inputText = ""
-        session.addMessage(role: "user", content: text)
+        session.addMessage(role: "user", content: text, characterId: character.rawValue)
         Analytics.logEvent("chat_message_sent", parameters: ["character": character.rawValue])
         isLoading = true
 
         // OpenAI へは直近10件のみ送る（コンテキスト肥大防止）
-        let recentMessages = Array(session.messages.suffix(10))
+        let recentMessages = Array(currentMessages.suffix(10))
 
         // API へ送る時点での関係性スナップショット（このターン分の加算前）
         let stateSnapshot = CharacterState.load(for: character.rawValue)
@@ -184,7 +188,7 @@ struct ChatView: View {
                     state: stateSnapshot
                 )
                 await MainActor.run {
-                    session.addMessage(role: "assistant", content: reply)
+                    session.addMessage(role: "assistant", content: reply, characterId: character.rawValue)
                     session.recordTurnCompleted(characterId: character.rawValue)
                     isLoading = false
                     // 音声入力(Dictation)対策: 完了時にも明示的にクリア
@@ -192,7 +196,7 @@ struct ChatView: View {
                 }
             } catch {
                 await MainActor.run {
-                    session.addMessage(role: "assistant", content: "エラーが発生しました。もう一度試してください。")
+                    session.addMessage(role: "assistant", content: "エラーが発生しました。もう一度試してください。", characterId: character.rawValue)
                     isLoading = false
                     inputText = ""
                 }

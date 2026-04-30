@@ -3,9 +3,13 @@ import Combine
 
 class ChatSession: ObservableObject {
     @Published var messages: [ChatMessage] = []
+    @Published var messagesByCharacter: [String: [ChatMessage]] = [:]
     @Published var turnsUsed: Int = 0
     @Published var bonusTurns: Int = 0
     @Published var isPremium: Bool = false
+
+    let targetCharacters = ["lin", "wei", "mei"]
+    private let maxHistoryPerCharacter = 50
 
     private let freeTurnsPerDay = 3
     private let lastResetKey = "chatLastResetDate"
@@ -28,10 +32,24 @@ class ChatSession: ObservableObject {
     init() {
         loadTurns()
         loadBonusTurns()
+        loadAllHistories()
         resetIfNewDay()
     }
 
+    private func loadAllHistories() {
+        for id in targetCharacters {
+            let key = "chat_history_\(id)"
+            if let data = UserDefaults.standard.data(forKey: key),
+               let history = try? JSONDecoder().decode([ChatMessage].self, from: data) {
+                messagesByCharacter[id] = history
+            } else {
+                messagesByCharacter[id] = []
+            }
+        }
+    }
+
     func addMessage(role: String, content: String) {
+        resetIfNewDay()
         let message = ChatMessage(role: role, content: content)
         messages.append(message)
         if role == "user" {
@@ -46,8 +64,43 @@ class ChatSession: ObservableObject {
         }
     }
 
+    /// キャラ別履歴に追加する。最新50件のみ保持し、UserDefaults に永続化する。
+    /// ターン消費（freeTurns / bonusTurns）は既存の addMessage(role:content:) と同じルールで処理する。
+    func addMessage(role: String, content: String, characterId: String) {
+        resetIfNewDay()
+        let message = ChatMessage(role: role, content: content)
+        var history = messagesByCharacter[characterId] ?? []
+        history.append(message)
+        if history.count > maxHistoryPerCharacter {
+            history.removeFirst(history.count - maxHistoryPerCharacter)
+        }
+        messagesByCharacter[characterId] = history
+        saveHistory(for: characterId)
+
+        if role == "user" {
+            if bonusTurns > 0 {
+                bonusTurns -= 1
+                saveBonusTurns()
+            } else {
+                turnsUsed += 1
+                saveTurns()
+            }
+        }
+    }
+
     func clearMessages() {
         messages = []
+    }
+
+    func saveHistory(for characterId: String) {
+        if let data = try? JSONEncoder().encode(messagesByCharacter[characterId] ?? []) {
+            UserDefaults.standard.set(data, forKey: "chat_history_\(characterId)")
+        }
+    }
+
+    func clearHistory(for characterId: String) {
+        messagesByCharacter[characterId] = []
+        UserDefaults.standard.removeObject(forKey: "chat_history_\(characterId)")
     }
 
     /// 1往復の会話が成立した時（AI返答受信後）に呼ぶ。
