@@ -1,20 +1,30 @@
 import Foundation
 import Combine
+import StoreKit
+import UIKit
 
 class ChatSession: ObservableObject {
     @Published var messages: [ChatMessage] = []
     @Published var messagesByCharacter: [String: [ChatMessage]] = [:]
     @Published var turnsUsed: Int = 0
     @Published var bonusTurns: Int = 0
+    /// プレミアム判定。実体は StoreKitManager.isPremium で、bindStoreManager(_:) で同期される。
     @Published var isPremium: Bool = false
+    /// 累計の user メッセージ送信回数。日跨ぎでもリセットされない。レビュー誘導等の判定に使う。
+    @Published var totalMessagesSent: Int = 0
+    private var isStoreManagerBound: Bool = false
 
     let targetCharacters = ["lin", "wei", "mei"]
     private let maxHistoryPerCharacter = 50
 
     private let freeTurnsPerDay = 3
+    private let initialBonus = 7
     private let lastResetKey = "chatLastResetDate"
     private let turnsUsedKey = "chatTurnsUsed"
     private let bonusTurnsKey = "chatBonusTurns"
+    private let initialBonusGrantedKey = "initialBonusGranted"
+    private let totalMessagesSentKey = "totalMessagesSent"
+    private let reviewRequestedKey = "reviewRequested"
 
     var remainingFreeTurns: Int {
         max(0, freeTurnsPerDay - turnsUsed)
@@ -32,8 +42,30 @@ class ChatSession: ObservableObject {
     init() {
         loadTurns()
         loadBonusTurns()
+        totalMessagesSent = UserDefaults.standard.integer(forKey: totalMessagesSentKey)
+        if !UserDefaults.standard.bool(forKey: initialBonusGrantedKey) {
+            bonusTurns += initialBonus
+            saveBonusTurns()
+            UserDefaults.standard.set(true, forKey: initialBonusGrantedKey)
+        }
         loadAllHistories()
         resetIfNewDay()
+    }
+
+    /// user ロールの送信時に呼ぶ。累計カウンタを進めて、しきい値に達した一度だけレビュー誘導を出す。
+    private func recordUserMessageSent() {
+        totalMessagesSent += 1
+        UserDefaults.standard.set(totalMessagesSent, forKey: totalMessagesSentKey)
+
+        if totalMessagesSent == 10 && !UserDefaults.standard.bool(forKey: reviewRequestedKey) {
+            DispatchQueue.main.async {
+                if let scene = UIApplication.shared.connectedScenes
+                    .first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene {
+                    SKStoreReviewController.requestReview(in: scene)
+                }
+            }
+            UserDefaults.standard.set(true, forKey: reviewRequestedKey)
+        }
     }
 
     private func loadAllHistories() {
@@ -53,6 +85,7 @@ class ChatSession: ObservableObject {
         let message = ChatMessage(role: role, content: content)
         messages.append(message)
         if role == "user" {
+            recordUserMessageSent()
             // bonusTurns があれば先に消費し、フリーターンを温存する
             if bonusTurns > 0 {
                 bonusTurns -= 1
@@ -78,6 +111,7 @@ class ChatSession: ObservableObject {
         saveHistory(for: characterId)
 
         if role == "user" {
+            recordUserMessageSent()
             if bonusTurns > 0 {
                 bonusTurns -= 1
                 saveBonusTurns()
@@ -116,6 +150,15 @@ class ChatSession: ObservableObject {
     func addBonusTurns(_ amount: Int) {
         bonusTurns += amount
         saveBonusTurns()
+    }
+
+    /// StoreKitManager の isPremium をこのセッションの isPremium にミラーする。
+    /// 一度バインドしたら以降の呼び出しは何もしない（多重購読防止）。
+    @MainActor
+    func bindStoreManager(_ manager: StoreKitManager) {
+        guard !isStoreManagerBound else { return }
+        isStoreManagerBound = true
+        manager.$isPremium.assign(to: &$isPremium)
     }
 
     // MARK: - Persistence

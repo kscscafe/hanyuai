@@ -11,6 +11,7 @@ import AppTrackingTransparency
 struct ContentView: View {
     @StateObject private var favorites = FavoritesStore()
     @StateObject private var chatSession = ChatSession()
+    @StateObject private var storeManager = StoreKitManager()
     @ObservedObject private var profile = UserProfile.shared
 
     var body: some View {
@@ -19,6 +20,10 @@ struct ContentView: View {
                 HomeView()
                     .environmentObject(favorites)
                     .environmentObject(chatSession)
+                    .environmentObject(storeManager)
+                    .task {
+                        chatSession.bindStoreManager(storeManager)
+                    }
             } else {
                 OnboardingView()
             }

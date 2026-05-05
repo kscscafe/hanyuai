@@ -1,0 +1,68 @@
+{
+  "identifier" : "D6EE698D-ABD8-4D68-AFD2-71360AAE4DDD",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+    {
+      "displayPrice" : "120",
+      "familyShareable" : false,
+      "internalID" : "0F7764AA-5E35-4FC3-A607-F2E95445B970",
+      "localizations" : [
+        {
+          "description" : "チャット10回分のチケットを追加します。",
+          "displayName" : "チケット10回分",
+          "locale" : "ja_JP"
+        }
+      ],
+      "productID" : "jp.co.officees.hanyuai.ticket10",
+      "referenceName" : "チケット10回分",
+      "type" : "Consumable"
+    }
+  ],
+  "settings" : {
+    "_applicationInternalID" : "0",
+    "_developerTeamID" : "K9LN7WZ9X6",
+    "_lastSynchronizedDate" : 0
+  },
+  "subscriptionGroups" : [
+    {
+      "id" : "6D1F397E-86DE-4AFE-9C7E-548E31C6561B",
+      "localizations" : [
+
+      ],
+      "name" : "プレミアムプラン",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "600",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "84A2F52C-0C71-4DFD-899D-CED01D85ECF4",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "チャット無制限・広告非表示のプレミアムプラン。",
+              "displayName" : "プレミアムプラン月額",
+              "locale" : "ja_JP"
+            }
+          ],
+          "productID" : "jp.co.officees.hanyuai.premium.monthly",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "プレミアムプラン月額",
+          "subscriptionGroupID" : "6D1F397E-86DE-4AFE-9C7E-548E31C6561B",
+          "type" : "RecurringSubscription"
+        }
+      ]
+    }
+  ],
+  "version" : {
+    "major" : 4,
+    "minor" : 0
+  }
+}

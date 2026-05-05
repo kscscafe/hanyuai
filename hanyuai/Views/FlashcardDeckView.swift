@@ -15,6 +15,8 @@ struct FlashcardDeckView: View {
     @State private var shuffled: [Word] = []
     @State private var didRestore = false
 
+    @EnvironmentObject private var session: ChatSession
+
     var body: some View {
         let deck = shuffled.isEmpty ? words : shuffled
 
@@ -37,6 +39,12 @@ struct FlashcardDeckView: View {
                 controls(deckCount: deck.count)
                     .padding(.horizontal)
                     .padding(.bottom, 8)
+
+                // 非プレミアム時のみ AdMob バナーを表示
+                if !session.isPremium {
+                    BannerAdView(adUnitID: AdUnitID.banner)
+                        .frame(height: 50)
+                }
             }
         }
         .navigationTitle(title)
@@ -186,5 +194,6 @@ struct FlashcardDeckView: View {
         FlashcardDeckView(words: WordRepository.hsk1, deckID: "preview")
     }
     .environmentObject(FavoritesStore())
+    .environmentObject(ChatSession())
     .preferredColorScheme(.dark)
 }

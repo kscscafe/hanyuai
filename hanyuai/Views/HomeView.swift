@@ -8,6 +8,7 @@ import SwiftUI
 
 struct HomeView: View {
     @EnvironmentObject private var favorites: FavoritesStore
+    @EnvironmentObject private var session: ChatSession
     @ObservedObject private var profile = UserProfile.shared
     @State private var showProfileSettings = false
 
@@ -15,19 +16,27 @@ struct HomeView: View {
         NavigationStack {
             ZStack {
                 AppTheme.background.ignoresSafeArea()
-                ScrollView {
-                    VStack(spacing: 18) {
-                        if !profile.hasAnyOptionalProfile {
-                            profilePromptBanner
+                VStack(spacing: 0) {
+                    ScrollView {
+                        VStack(spacing: 18) {
+                            chatEntryButton
+                            levelGrid
+                            if !profile.hasAnyOptionalProfile {
+                                profilePromptBanner
+                            }
+                            diagnosisCard
+                            favoritesCard
                         }
-                        diagnosisCard
-                        favoritesCard
-                        levelGrid
-                        chatEntryButton
+                        .padding(20)
                     }
-                    .padding(20)
+                    .scrollContentBackground(.hidden)
+
+                    // 非プレミアム時のみ AdMob バナーを表示
+                    if !session.isPremium {
+                        BannerAdView(adUnitID: AdUnitID.banner)
+                            .frame(height: 50)
+                    }
                 }
-                .scrollContentBackground(.hidden)
             }
             .navigationTitle("HanYuAI")
             .toolbarBackground(.hidden, for: .navigationBar)
@@ -248,5 +257,6 @@ private struct LevelCard: View {
 #Preview {
     HomeView()
         .environmentObject(FavoritesStore())
+        .environmentObject(ChatSession())
         .preferredColorScheme(.dark)
 }

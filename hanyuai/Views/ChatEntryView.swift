@@ -12,10 +12,13 @@ struct ChatEntryView: View {
             ChatView(character: character)
                 .toolbar {
                     ToolbarItem(placement: .navigationBarTrailing) {
-                        Button("変更") {
+                        Button {
                             selectedCharacter = nil
                             UserDefaults.standard.removeObject(forKey: "selectedCharacter")
+                        } label: {
+                            Image(systemName: "person.2.fill")
                         }
+                        .accessibilityLabel("キャラクターを変更")
                     }
                 }
         } else {

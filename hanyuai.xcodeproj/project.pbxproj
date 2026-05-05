@@ -8,15 +8,30 @@
 
 /* Begin PBXBuildFile section */
 		F15965842FA22FC0005ECEF9 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = F15965832FA22FC0005ECEF9 /* FirebaseAnalytics */; };
+		F15991072FA32056005ECEF9 /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = F15991062FA32056005ECEF9 /* GoogleMobileAds */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		F15901292FA0D4EF005ECEF9 /* hanyuai.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = hanyuai.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		F15991042FA31AA9005ECEF9 /* Exceptions for "hanyuai" folder in "hanyuai" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				hanyuai.storekit,
+				Info.plist,
+			);
+			target = F15901282FA0D4EF005ECEF9 /* hanyuai */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		F159012B2FA0D4EF005ECEF9 /* hanyuai */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				F15991042FA31AA9005ECEF9 /* Exceptions for "hanyuai" folder in "hanyuai" target */,
+			);
 			path = hanyuai;
 			sourceTree = "<group>";
 		};
@@ -27,6 +42,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F15991072FA32056005ECEF9 /* GoogleMobileAds in Frameworks */,
 				F15965842FA22FC0005ECEF9 /* FirebaseAnalytics in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -71,6 +87,7 @@
 			name = hanyuai;
 			packageProductDependencies = (
 				F15965832FA22FC0005ECEF9 /* FirebaseAnalytics */,
+				F15991062FA32056005ECEF9 /* GoogleMobileAds */,
 			);
 			productName = hanyuai;
 			productReference = F15901292FA0D4EF005ECEF9 /* hanyuai.app */;
@@ -102,6 +119,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				F15965822FA22FC0005ECEF9 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				F15991052FA32056005ECEF9 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = F159012A2FA0D4EF005ECEF9 /* Products */;
@@ -261,10 +279,11 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 6;
 				DEVELOPMENT_TEAM = K9LN7WZ9X6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = hanyuai/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = HanYuAI;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "発音チェック機能でマイクを使用します。";
@@ -278,7 +297,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.0;
+				MARKETING_VERSION = 1.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = jp.co.officees.hanyuai;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -297,10 +316,11 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 6;
 				DEVELOPMENT_TEAM = K9LN7WZ9X6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = hanyuai/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = HanYuAI;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "発音チェック機能でマイクを使用します。";
@@ -314,7 +334,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.0;
+				MARKETING_VERSION = 1.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = jp.co.officees.hanyuai;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -359,6 +379,14 @@
 				minimumVersion = 12.12.1;
 			};
 		};
+		F15991052FA32056005ECEF9 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/googleads/swift-package-manager-google-mobile-ads.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 13.3.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -366,6 +394,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = F15965822FA22FC0005ECEF9 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseAnalytics;
+		};
+		F15991062FA32056005ECEF9 /* GoogleMobileAds */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F15991052FA32056005ECEF9 /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */;
+			productName = GoogleMobileAds;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
