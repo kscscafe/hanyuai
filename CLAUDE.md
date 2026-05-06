@@ -1,22 +1,63 @@
 # HanYuAI 開発注意事項
 
+## 基本情報
+- アプリ名：HanYuAI（AIと話して学ぶ中国語）
+- Bundle ID：jp.co.officees.hanyuai
+- リポジトリ：github.com/kscscafe/hanyuai
+- API：github.com/kscscafe/hanyuai-api（Vercel）
+- サポートサイト：https://officees.co.jp/hanyuai/
+- 現在のバージョン：v1.1.0 Build 7（審査中）
+
+## 技術スタック
+- フロント：SwiftUI（iOS・iPhone only・ポートレート固定）
+- API：Vercel（Node.js）→ OpenAI GPT-4o-mini
+- プロモコード制限：Upstash Redis（hnd1/Tokyo）
+- 分析：Firebase Analytics
+- 広告：AdMob
+- 課金：StoreKit2（IAP）
+
+## システム構成
+| コンポーネント | 役割 |
+|---|---|
+| iOS App (SwiftUI) | メインアプリ |
+| Bundle内 HSK4音声 | 1,797件のmp3、実行時外部接続なし |
+| TTS (AVSpeechSynthesizer) | HSK1〜3の暫定音声（先生音声に差し替え予定） |
+| UserDefaults | ターン数・プロモコード・チャット履歴をローカル保存 |
+| Vercel (Node.js) | api/chat.js（OpenAI中継）・api/validate-code.js（プロモコード） |
+| OpenAI GPT-4o-mini | チャットAI本体 |
+| Upstash Redis | プロモコード1デバイス1回制限（hnd1/Tokyo） |
+| Firebase Analytics | イベント記録 |
+
+## キャラクター
+| キャラ | 性別 | ペルソナ |
+|---|---|---|
+| 小龍（シャオロン） | — | マスコット龍、起動挨拶担当 |
+| リン（林 小雨） | 女性 | 上海出身・日本留学中の大学院生 |
+| ウェイ（王 建） | 男性 | 北京出身・日系企業勤務 |
+| メイ（陳 美麗） | 女性 | 広州出身・中国語教師 |
+
+## 課金設計
+- 無料：1日3ターン
+- チケット：10回分（消耗型IAP）
+- プレミアム：月額サブスク（無制限）
+- プロモコード：HANYU10（10回）・HANYU30（30回）
+
+---
+
 ## ⚠️ チャット系：触るたびに必ず確認
 
-### キャラ別チャット履歴（v1.1実装予定）
-- **確定仕様**：キャラごとに最新50件を保持・UserDefaultsで永続化・再起動後も復元
-- **「新しい会話を始める」ボタン**：ユーザーが任意でリセット。このタイミングで開幕セリフを表示
-- **開幕セリフ**：affinityのstageに応じて変化（初対面／知合い／親しい／特別）＋久しぶりフラグ連動
-- **現状（v1.0）**：ChatViewのonAppearでclearMessages()を呼ぶ暫定対応。キャラ別保存はしていない
+### キャラ別チャット履歴
+- v1.1実装予定：キャラごとに最新50件を保持・UserDefaultsで永続化
+- 現状（v1.0）：ChatViewのonAppearでclearMessages()を呼ぶ暫定対応
 
 ### キャラ切り替え時の履歴汚染（過去バグ）
-- **何が起きたか**：ChatSessionが全キャラ共通1インスタンスのため、キャラを切り替えると別キャラとの会話が表示される
-- **対策済み（v1.0）**：ChatViewのonAppearでclearMessages()を呼ぶ
-- **v1.1以降の注意**：キャラ別に履歴を分離するため、messagesをキャラIDをキーにした辞書型に変更する。キャラの追加・削除・変更時は必ずこの構造に合わせること
+- ChatSessionが全キャラ共通1インスタンスのため切り替えで汚染される
+- 対策済み（v1.0）：onAppearでclearMessages()
+- v1.1以降：messagesをキャラIDをキーにした辞書型に変更すること
 
-### 日跨ぎでのターン数フリーズ（過去バグ）
-- **何が起きるか**：resetIfNewDay()がinit()（アプリ起動時）でしか呼ばれていないため、アプリを閉じずに日付が変わるとターン数がリセットされない
-- **対策済み**：addMessage(role:content:)の先頭でresetIfNewDay()を毎回呼ぶ
-- **今後の注意**：日付依存の処理（ターン数・ストリーク・統計リセット等）は必ずアクション発生時にも呼び出すこと。init()だけに置かない。
+### 日跨ぎでのターン数フリーズ（過去バグ・対策済み）
+- addMessage(role:content:)の先頭でresetIfNewDay()を毎回呼ぶ
+- init()だけに日付依存処理を置かない
 
 ---
 
@@ -24,64 +65,43 @@
 
 | 声調 | 色 |
 |---|---|
-| 第1声 | 透明（何も指定しない） |
+| 第1声 | 透明 |
 | 第2声 | 黄 |
 | 第3声 | 青 |
 | 第4声 | 赤 |
-| 軽声 | 透明（何も指定しない） |
+| 軽声 | 透明 |
 
-- **白は使わない**：背景色が変わった時（ダークモード対応など）に浮いて見える。透明なら背景に依存するため影響を受けない
-
----
-
-## ⚠️ 音声系：例文・音声を追加・変更するたびに必ず確認
-
-### ファイル名不一致は静かに失敗する
-- ファイル名が1文字でもズレるとエラーなしでTTS（機械音声）にフォールバックする
-- クラッシュしないので気づきにくい
-
-### チェックリスト（音声ファイル追加・変更時）
-- [ ] ファイル名がコード側の命名規則と完全一致しているか
-- [ ] 拡張子が正しいか（.mp3 / .m4a など）
-- [ ] Xcodeの「Add to target」にチェックが入っているか
-- [ ] Clean Build Folder（⇧⌘K）を実施したか
-- [ ] 追加後に実機で数件サンプリングして**耳で確認**したか（TTSと先生の声は明確に違う）
-
-### 現状の音声構成
-- HSK4：先生の実音声（mp3、1,797ファイル、Bundle内）
-- HSK1〜3：AVSpeechSynthesizer（TTS、暫定対応）
+白は使わない（ダークモード対応時に浮く）。
 
 ---
 
-## システム構成
+## ⚠️ 音声系：ファイル追加・変更時に必ず確認
 
-### 実行時の接続関係
-- iOS App → Vercel（HTTPS）→ OpenAI GPT-4o-mini（チャット）
-- iOS App → Vercel（HTTPS）→ Upstash Redis（プロモコード検証）
-- iOS App → Firebase Analytics（イベント送信）
-- GitHub（hanyuai-api）→ Vercel（push時に自動デプロイ）
-
-### 各コンポーネントの役割
-| コンポーネント | 役割 |
-|---|---|
-| iOS App (SwiftUI) | メインアプリ |
-| Bundle内 HSK4音声 | 1,797件のmp3、実行時に外部接続なし |
-| TTS (AVSpeechSynthesizer) | HSK1〜3の暫定音声。先生音声に差し替え予定 |
-| UserDefaults | ターン数・プロモコード使用済みフラグ・初回フラグ・チャット履歴（v1.1〜）をローカル保存 |
-| Vercel (Node.js) | api/chat.js（OpenAI中継）、api/validate-code.js（プロモコード検証） |
-| OpenAI GPT-4o-mini | チャットAI本体 |
-| Upstash Redis | プロモコードの1デバイス1回制限管理（hnd1/Tokyo） |
-| Firebase Analytics | イベント記録 |
-| GitHub Pages | サポートサイト（https://kscscafe.github.io/hanyuai-support/） |
-
-### 注意
-- Upstash RedisにはiOSから直接アクセスしない。必ずVercel経由
-- さくらサーバーはHSK4音声の取得元だが取り込み済み。実行時接続なし
-- Formspreeはサポートサイトのお問い合わせフォームのみで使用
+- ファイル名が1文字でもズレるとエラーなしでTTSにフォールバックする
+- Xcodeの「Add to target」チェックを確認
+- Clean Build Folder（⇧⌘K）を実施
+- 追加後に実機で耳確認（TTSと先生の声は明確に違う）
 
 ---
 
-## 現在のビルド状況
-- 申請取り消し済み（1.0.0(3)）
-- 次のビルド番号：1.0.0(4)
-- 修正済み：日跨ぎバグ（addMessage(role:content:)の先頭でresetIfNewDay呼び出し）
+## ⚠️ App Store申請の必須設定（過去リジェクト経験）
+
+- TARGETED_DEVICE_FAMILY = 1（iPhone only）
+- UIRequiresFullScreen = YES（Info.plistに明示・必須）
+  → 片方だけではiPad互換モードで起動してしまう（3回経験済み）
+- NSUserTrackingUsageDescription（Info.plistに必須）
+- ATTダイアログが出ないとリジェクトされる（LOUD・HanYuAI両方で経験）
+
+---
+
+## セッション管理ルール
+- 作業開始時：docs/sessions/ の直近ファイルを確認してから着手
+- 作業終了時：必ず /session_end コマンドを実行
+- まとめは docs/sessions/YYYYMMDD.md に保存
+- TASKS.md を更新してから git push
+
+## 現在の優先タスク（詳細はTASKS.md参照）
+1. 🔴 v1.1.0 審査通過待ち
+2. 🟡 HSK4級例文の先生音声差し替え
+3. 🟡 Firebase Analytics導入
+4. 🟢 聞き流し機能・並び替え問題
