@@ -79,6 +79,23 @@ struct PaywallView: View {
 
             Button("閉じる") { dismiss() }
                 .foregroundColor(.gray)
+
+            // サブスクリプション開示（Apple 3.1.2 必須）
+            VStack(alignment: .leading, spacing: 6) {
+                Text("HanYuAI プレミアム（月額自動更新）")
+                    .font(.caption.bold())
+                Text("• 期間終了の24時間以上前に解除しない限り自動更新されます\n• 更新料金は期間終了の24時間以内に App Store アカウントに課金されます\n• 解約は App Store の登録設定からいつでも可能です")
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+
+                HStack(spacing: 16) {
+                    Link("利用規約", destination: URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")!)
+                    Link("プライバシーポリシー", destination: URL(string: "https://officees.co.jp/hanyuai/privacy")!)
+                }
+                .font(.caption)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.top, 8)
         }
         .padding()
         .alert("エラー", isPresented: $showError) {
