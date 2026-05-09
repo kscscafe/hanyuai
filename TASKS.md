@@ -1,17 +1,17 @@
 # TASKS.md — HanYuAI
-_最終更新：2026-05-08_
+_最終更新：2026-05-09_
 
 ---
 
 ## 🔴 優先度高
 
-- [ ] v1.1.0 Build 9 審査通過待ち（2026-05-07再々提出）
-  - Build 8 リジェクト原因：Guideline 3.1.2(c) - EULAリンク不足
-  - Build 9 で App Store説明文にEULA/プライバシーリンク追加・PaywallViewにサブスク開示ブロック追加で対応
-  - ticket10 が独立して「審査待ち」キューにいる状態（取消不可）。レビュアーメモで同時審査を依頼
-- [ ] v1.2 UX改修（v1.1.0 承認後着手）
-  - キャラ × 課金分離設計（farewell message / 0回時UI / Paywall 2枚カード化）
-  - swift_dev 指示文は確定済み
+- [ ] v1.2.0 Build 10 審査通過待ち（2026-05-08提出）
+  - 内容：チューターTTS（ボタン再生・速度調整）／キャラプロフィールモーダル
+- [ ] v1.2.0 の iOS 側ソースをコミット（TTS / プロフィールモーダル / バージョン bump）
+  - 審査結果が出る前後でコミット → タグ作成の流れ
+- [ ] v1.3 検討：プロモコード入力 UI 復活 or ディープリンク化
+  - REI50 のバックエンドは実装済み（commit 30aa0e5）だが、アプリ側入口がない
+  - ChatView の3箇所コメントアウトを解除 or `hanyuai://promo/REI50` 式の Universal Link / URL Scheme 実装
 
 ---
 
@@ -19,12 +19,9 @@ _最終更新：2026-05-08_
 
 - [ ] HSK4級例文の先生音声差し替え
 - [ ] HSK1〜3級例文の再作成・音声整備（TTS→先生音声）
-- [ ] Firebase Analytics導入
-- [ ] キャラ別チャット履歴（v1.1）
-  - messagesをキャラIDキーの辞書型に変更
-  - 「新しい会話を始める」ボタン追加
-  - 開幕セリフをstage連動に
+- [ ] Firebase Analytics の本格運用（導入は v1.1.0 で完了）
 - [ ] TestFlight外部テスター配布
+- [ ] REI50 配布シーン設計（QR / note / X / App Store 説明文）
 
 ---
 
@@ -40,6 +37,16 @@ _最終更新：2026-05-08_
 
 ## ✅ 完了済み
 
+- [x] v1.2.0 Build 10 App Store 審査提出 - 2026-05-08
+- [x] v1.2.0 リリース前チェック（adsEnabled / バージョン bump / FIRAnalyticsDebug）- 2026-05-08
+- [x] チューター音声 TTS 実装（OpenAI TTS via Vercel、ボタン再生＋Haptic、速度0.8〜1.0）- 2026-05-08
+- [x] キャラクタープロフィールモーダル（アバタータップでシート表示）- 2026-05-08
+- [x] `ChatCharacter` に `hometownLabel` 集約、`OnboardingCharacterView` の重複排除 - 2026-05-08
+- [x] `APIConfig.swift` 新規（Vercel ベース URL 集約） - 2026-05-08
+- [x] REI50 用「グローバル1コード=1回」チェックを `validate-code.js` に追加（commit 30aa0e5） - 2026-05-08
+- [x] TTS voice mapping 微調整（wei: onyx → echo） - 2026-05-08
+- [x] v1.1.0 GitHub Release 作成（タグ `v1.1.0` を `7a72cee` に付与） - 2026-05-08
+- [x] v1.1.0 App Store 審査通過・公開 - 2026-05-08
 - [x] v1.1.0 Build 9 アップロード・再々提出（EULA対応）- 2026-05-07
 - [x] PaywallView にサブスク開示ブロック追加（タイトル/期間/自動更新条件/EULA/プライバシーリンク）- 2026-05-07
 - [x] App Store 説明文に EULA/プライバシーリンク・サブスク情報追加 - 2026-05-07
