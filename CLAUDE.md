@@ -6,7 +6,7 @@
 - リポジトリ：github.com/kscscafe/hanyuai
 - API：github.com/kscscafe/hanyuai-api（Vercel）
 - サポートサイト：https://officees.co.jp/hanyuai/
-- 現在のバージョン：v1.1.0 Build 7（審査中）
+- 現在のバージョン：v1.2.0 Build 10（審査中、2026-05-08提出）。v1.1.0 は公開済み
 
 ## 技術スタック
 - フロント：SwiftUI（iOS・iPhone only・ポートレート固定）
@@ -21,9 +21,10 @@
 |---|---|
 | iOS App (SwiftUI) | メインアプリ |
 | Bundle内 HSK4音声 | 1,797件のmp3、実行時外部接続なし |
-| TTS (AVSpeechSynthesizer) | HSK1〜3の暫定音声（先生音声に差し替え予定） |
-| UserDefaults | ターン数・プロモコード・チャット履歴をローカル保存 |
-| Vercel (Node.js) | api/chat.js（OpenAI中継）・api/validate-code.js（プロモコード） |
+| AVSpeechSynthesizer (SpeechSynthesizer.swift) | HSK1〜3例文の暫定音声（先生音声に差し替え予定） |
+| OpenAI TTS (TTSService.swift) | チャット返答のキャラクター音声。バブル右下のスピーカーボタンから手動再生（v1.2〜） |
+| UserDefaults | ターン数・プロモコード・チャット履歴・TTS設定をローカル保存 |
+| Vercel (Node.js) | api/chat.js（OpenAI中継）・api/validate-code.js（プロモコード）・api/tts.js（OpenAI TTSプロキシ） |
 | OpenAI GPT-4o-mini | チャットAI本体 |
 | Upstash Redis | プロモコード1デバイス1回制限（hnd1/Tokyo） |
 | Firebase Analytics | イベント記録 |
@@ -40,20 +41,19 @@
 - 無料：1日3ターン
 - チケット：10回分（消耗型IAP）
 - プレミアム：月額サブスク（無制限）
-- プロモコード：HANYU10（10回）・HANYU30（30回）
+- プロモコード：HANYU10（10回）・HANYU30（30回、複数回使用可）／REI50（50回、グローバル1回限り、バックエンド実装済みだがアプリ側入口は v1.3 で再設計予定）
 
 ---
 
 ## ⚠️ チャット系：触るたびに必ず確認
 
-### キャラ別チャット履歴
-- v1.1実装予定：キャラごとに最新50件を保持・UserDefaultsで永続化
-- 現状（v1.0）：ChatViewのonAppearでclearMessages()を呼ぶ暫定対応
+### キャラ別チャット履歴（v1.1で実装済み）
+- ChatSession.messagesByCharacter[characterId] でキャラ別に保持・UserDefaults永続化
+- 過去バグ：全キャラ共通1インスタンスで切り替え時に汚染 → 辞書型化で解消済み
 
-### キャラ切り替え時の履歴汚染（過去バグ）
-- ChatSessionが全キャラ共通1インスタンスのため切り替えで汚染される
-- 対策済み（v1.0）：onAppearでclearMessages()
-- v1.1以降：messagesをキャラIDをキーにした辞書型に変更すること
+### キャラクター情報の集約原則
+- キャラの属性（displayName / nameJP / profile / avatarImageName / hometownLabel / systemPrompt / openingMessage）は ChatCharacter.swift に集約する
+- View 側でハードコードしない（過去：OnboardingCharacterView に origin が私的に持たれていて重複していた → ChatCharacter.hometownLabel に移管済み）
 
 ### 日跨ぎでのターン数フリーズ（過去バグ・対策済み）
 - addMessage(role:content:)の先頭でresetIfNewDay()を毎回呼ぶ
@@ -101,7 +101,8 @@
 - TASKS.md を更新してから git push
 
 ## 現在の優先タスク（詳細はTASKS.md参照）
-1. 🔴 v1.1.0 審査通過待ち
-2. 🟡 HSK4級例文の先生音声差し替え
-3. 🟡 Firebase Analytics導入
-4. 🟢 聞き流し機能・並び替え問題
+1. 🔴 v1.2.0 Build 10 審査通過待ち
+2. 🔴 v1.2.0 の iOS 側ソースをコミット（working tree に未コミットの TTS / プロフィールモーダル等が残っている）
+3. 🔴 v1.3 検討：プロモコード入力 UI 復活 or ディープリンク化（REI50 用）
+4. 🟡 HSK4級例文の先生音声差し替え
+5. 🟢 聞き流し機能・並び替え問題
