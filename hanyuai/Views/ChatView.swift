@@ -410,7 +410,16 @@ struct MessageBubble: View {
     let message: ChatMessage
     let character: ChatCharacter
 
+    @ObservedObject private var tts = TTSService.shared
+    @AppStorage("tts_chinese_only") private var ttsChineseOnly: Bool = true
+    @State private var showingProfile: Bool = false
+
     var isUser: Bool { message.role == "user" }
+
+    /// この AI バブルが現在 TTS で再生されているか。
+    private var isPlayingThis: Bool {
+        tts.playingMessageId == message.id.uuidString && tts.isPlaying
+    }
 
     var body: some View {
         HStack(alignment: .top, spacing: 8) {
@@ -428,13 +437,47 @@ struct MessageBubble: View {
                     .scaledToFill()
                     .frame(width: 36, height: 36)
                     .clipShape(Circle())
-                Text(message.content)
-                    .padding(12)
-                    .background(Color(.secondarySystemBackground))
-                    .cornerRadius(16)
-                    .cornerRadius(4, corners: [.topLeft])
+                    .contentShape(Circle())
+                    .onTapGesture { showingProfile = true }
+                    .accessibilityLabel("\(character.nameJP) のプロフィールを開く")
+                    .sheet(isPresented: $showingProfile) {
+                        CharacterProfileView(character: character)
+                    }
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(message.content)
+                    HStack {
+                        Spacer()
+                        Button(action: playTapped) {
+                            Image(systemName: "speaker.wave.2")
+                                .font(.footnote)
+                                .foregroundColor(isPlayingThis ? .blue : .secondary)
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityLabel(isPlayingThis ? "再生中" : "音声で再生")
+                    }
+                }
+                .padding(12)
+                .background(Color(.secondarySystemBackground))
+                .cornerRadius(16)
+                .cornerRadius(4, corners: [.topLeft])
                 Spacer()
             }
+        }
+    }
+
+    private func playTapped() {
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        // 未設定時 (UserDefaults.double がデフォルト 0 を返す) は標準速度 1.0 にフォールバック
+        let storedSpeed = UserDefaults.standard.double(forKey: "tts_speed")
+        let speed = storedSpeed == 0 ? 1.0 : storedSpeed
+        Task {
+            await TTSService.shared.speak(
+                messageId: message.id.uuidString,
+                text: message.content,
+                character: character,
+                chineseOnly: ttsChineseOnly,
+                speed: speed
+            )
         }
     }
 }

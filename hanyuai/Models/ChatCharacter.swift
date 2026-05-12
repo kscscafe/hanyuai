@@ -39,6 +39,14 @@ enum ChatCharacter: String, CaseIterable, Identifiable {
         }
     }
 
+    var hometownLabel: String {
+        switch self {
+        case .lin: return "上海出身"
+        case .wei: return "北京出身"
+        case .mei: return "広州出身"
+        }
+    }
+
     var systemPrompt: String {
         let base = """
         あなたは中国語学習アプリ「HanYuAI」のAIチューターです。

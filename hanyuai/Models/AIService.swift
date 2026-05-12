@@ -2,7 +2,7 @@ import Foundation
 
 class AIService {
     static let shared = AIService()
-    private let apiURL = "https://hanyuai-api.vercel.app/api/chat"
+    private let apiURL = "\(APIConfig.baseURL)/api/chat"
 
     func sendMessage(
         messages: [ChatMessage],

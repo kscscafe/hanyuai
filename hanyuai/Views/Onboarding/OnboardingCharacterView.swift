@@ -40,14 +40,6 @@ struct OnboardingCharacterView: View {
 private struct CharacterIntroRow: View {
     let character: ChatCharacter
 
-    private var origin: String {
-        switch character {
-        case .lin: return "上海出身"
-        case .wei: return "北京出身"
-        case .mei: return "広州出身"
-        }
-    }
-
     private var oneLiner: String {
         switch character {
         case .lin: return "明るくフレンドリーな大学院生"
@@ -68,7 +60,7 @@ private struct CharacterIntroRow: View {
                 Text("\(character.nameJP)（\(character.displayName)）")
                     .font(.headline)
                     .foregroundStyle(AppTheme.primaryText)
-                Text(origin)
+                Text(character.hometownLabel)
                     .font(.caption)
                     .foregroundStyle(AppTheme.tertiaryText)
                 Text(oneLiner)
