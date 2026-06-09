@@ -6,7 +6,7 @@
 - リポジトリ：github.com/kscscafe/hanyuai
 - API：github.com/kscscafe/hanyuai-api（Vercel）
 - サポートサイト：https://officees.co.jp/hanyuai/
-- 現在のバージョン：v1.2.0 Build 10（審査中、2026-05-08提出）。v1.1.0 は公開済み
+- 現在のバージョン：v1.2.0 Build 10（審査通過・公開済み、GitHub リリース登録済み）
 
 ## 技術スタック
 - フロント：SwiftUI（iOS・iPhone only・ポートレート固定）
@@ -101,8 +101,6 @@
 - TASKS.md を更新してから git push
 
 ## 現在の優先タスク（詳細はTASKS.md参照）
-1. 🔴 v1.2.0 Build 10 審査通過待ち
-2. 🔴 v1.2.0 の iOS 側ソースをコミット（working tree に未コミットの TTS / プロフィールモーダル等が残っている）
-3. 🔴 v1.3 検討：プロモコード入力 UI 復活 or ディープリンク化（REI50 用）
-4. 🟡 HSK4級例文の先生音声差し替え
-5. 🟢 聞き流し機能・並び替え問題
+1. 🔴 v1.3 検討：プロモコード入力 UI 復活 or ディープリンク化（REI50 用）
+2. 🟡 HSK4級例文の先生音声差し替え
+3. 🟢 聞き流し機能・並び替え問題
