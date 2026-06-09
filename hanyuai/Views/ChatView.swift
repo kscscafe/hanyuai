@@ -149,6 +149,9 @@ struct ChatView: View {
         .sheet(isPresented: $showConsent) {
             AIConsentView()
         }
+        .sheet(isPresented: $session.showRatingGate) {
+            RatingGateView()
+        }
         .onAppear {
             // キャラ別履歴を使うため、レガシーな共有 messages のみクリアする（per-character 履歴は維持）
             session.clearMessages()

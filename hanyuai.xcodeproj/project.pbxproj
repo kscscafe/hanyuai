@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		F15965842FA22FC0005ECEF9 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = F15965832FA22FC0005ECEF9 /* FirebaseAnalytics */; };
+		F1F1F0010000000000000001 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = F1F1F0020000000000000002 /* FirebaseFirestore */; };
 		F15991072FA32056005ECEF9 /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = F15991062FA32056005ECEF9 /* GoogleMobileAds */; };
 /* End PBXBuildFile section */
 
@@ -44,6 +45,7 @@
 			files = (
 				F15991072FA32056005ECEF9 /* GoogleMobileAds in Frameworks */,
 				F15965842FA22FC0005ECEF9 /* FirebaseAnalytics in Frameworks */,
+				F1F1F0010000000000000001 /* FirebaseFirestore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -87,6 +89,7 @@
 			name = hanyuai;
 			packageProductDependencies = (
 				F15965832FA22FC0005ECEF9 /* FirebaseAnalytics */,
+				F1F1F0020000000000000002 /* FirebaseFirestore */,
 				F15991062FA32056005ECEF9 /* GoogleMobileAds */,
 			);
 			productName = hanyuai;
@@ -394,6 +397,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = F15965822FA22FC0005ECEF9 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseAnalytics;
+		};
+		F1F1F0020000000000000002 /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F15965822FA22FC0005ECEF9 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
 		};
 		F15991062FA32056005ECEF9 /* GoogleMobileAds */ = {
 			isa = XCSwiftPackageProductDependency;

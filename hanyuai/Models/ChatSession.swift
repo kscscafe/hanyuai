@@ -1,7 +1,5 @@
 import Foundation
 import Combine
-import StoreKit
-import UIKit
 
 class ChatSession: ObservableObject {
     @Published var messages: [ChatMessage] = []
@@ -12,6 +10,9 @@ class ChatSession: ObservableObject {
     @Published var isPremium: Bool = false
     /// 累計の user メッセージ送信回数。日跨ぎでもリセットされない。レビュー誘導等の判定に使う。
     @Published var totalMessagesSent: Int = 0
+    /// レーティングゲート（楽しんでいますか？ → レビュー誘導 or フィードバック）の表示フラグ。
+    /// しきい値到達時に一度だけ true になり、ChatView の .sheet で RatingGateView を出す。
+    @Published var showRatingGate: Bool = false
     private var isStoreManagerBound: Bool = false
 
     let targetCharacters = ["lin", "wei", "mei"]
@@ -52,17 +53,16 @@ class ChatSession: ObservableObject {
         resetIfNewDay()
     }
 
-    /// user ロールの送信時に呼ぶ。累計カウンタを進めて、しきい値に達した一度だけレビュー誘導を出す。
+    /// user ロールの送信時に呼ぶ。累計カウンタを進めて、しきい値に達した一度だけレーティングゲートを出す。
     private func recordUserMessageSent() {
         totalMessagesSent += 1
         UserDefaults.standard.set(totalMessagesSent, forKey: totalMessagesSentKey)
 
         if totalMessagesSent == 10 && !UserDefaults.standard.bool(forKey: reviewRequestedKey) {
+            // SKStoreReviewController を直接呼ぶ代わりに、まず RatingGateView を表示する。
+            // 「楽しんでいますか？」→ はい:レビュー誘導 / いいえ:フィードバック収集 という導線に置き換え。
             DispatchQueue.main.async {
-                if let scene = UIApplication.shared.connectedScenes
-                    .first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene {
-                    SKStoreReviewController.requestReview(in: scene)
-                }
+                self.showRatingGate = true
             }
             UserDefaults.standard.set(true, forKey: reviewRequestedKey)
         }
