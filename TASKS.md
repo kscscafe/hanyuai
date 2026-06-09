@@ -33,6 +33,9 @@ _最終更新：2026-06-09_
 
 ## ✅ 完了済み
 
+- [x] v1.2.1 (11) GitHub リリース登録済み - 2026-06-09
+  - レーティングゲート・FirebaseFirestore・無料枠10回・CLAUDE.md更新
+  - App Store Connect への提出は別途必要
 - [x] v1.2.0 App Store 審査通過・公開済み（Build 10）- 2026-06-09
 - [x] v1.2.0 の iOS 側ソースをコミット・GitHub リリース登録済み - 2026-06-09
 - [x] レーティングゲート実装（RatingGateView.swift 新規・ChatSession.swift / ChatView.swift 修正・FirebaseFirestore 追加）- 2026-06-09
