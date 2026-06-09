@@ -1,5 +1,5 @@
 # TASKS.md — HanYuAI
-_最終更新：2026-05-09_
+_最終更新：2026-06-09_
 
 ---
 
@@ -37,6 +37,9 @@ _最終更新：2026-05-09_
 
 ## ✅ 完了済み
 
+- [x] レーティングゲート実装（RatingGateView.swift 新規・ChatSession.swift / ChatView.swift 修正・FirebaseFirestore 追加）- 2026-06-09
+  - 累計10通到達で「楽しんでいますか？」→ はい:ストアレビュー誘導 / いいえ:フィードバック → Firestore "feedback" 保存 → ボーナス10回付与
+- [x] Firestore セキュリティルール設定（"feedback" コレクション）- 2026-06-09
 - [x] v1.2.0 Build 10 App Store 審査提出 - 2026-05-08
 - [x] v1.2.0 リリース前チェック（adsEnabled / バージョン bump / FIRAnalyticsDebug）- 2026-05-08
 - [x] チューター音声 TTS 実装（OpenAI TTS via Vercel、ボタン再生＋Haptic、速度0.8〜1.0）- 2026-05-08
