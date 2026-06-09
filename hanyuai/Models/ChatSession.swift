@@ -18,7 +18,7 @@ class ChatSession: ObservableObject {
     let targetCharacters = ["lin", "wei", "mei"]
     private let maxHistoryPerCharacter = 50
 
-    private let freeTurnsPerDay = 3
+    private let freeTurnsPerDay = 10
     private let initialBonus = 7
     private let lastResetKey = "chatLastResetDate"
     private let turnsUsedKey = "chatTurnsUsed"
