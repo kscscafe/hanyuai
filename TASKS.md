@@ -1,5 +1,5 @@
 # TASKS.md — HanYuAI
-_最終更新：2026-06-09_
+_最終更新：2026-10-16_
 
 ---
 
@@ -33,6 +33,12 @@ _最終更新：2026-06-09_
 
 ## ✅ 完了済み
 
+- [x] v1.2.2 向けの変更をコミット済み（ビルド番号・バージョンの更新と App Store 提出は手作業）- 2026-10-16
+  - 計測イベント追加：character_selected / chat_opened / ai_consent_agreed / chat_api_error / chat_guide_opened
+  - AIService で HTTP ステータスを判定（失敗時に AIServiceError.http）
+  - チャット画面に、簡体中国語キーボード未追加の方向けの案内帯を追加
+  - 「中国語でチャットするには」説明画面（ChatGuideView）を追加し、トップのチャットボタン直下からリンク
+  - HSKレベルカードの高さを縮小（120pt → 84pt）
 - [x] v1.2.1 (11) GitHub リリース登録済み - 2026-06-09
   - レーティングゲート・FirebaseFirestore・無料枠10回・CLAUDE.md更新
   - App Store Connect への提出は別途必要
