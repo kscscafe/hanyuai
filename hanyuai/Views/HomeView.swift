@@ -19,7 +19,10 @@ struct HomeView: View {
                 VStack(spacing: 0) {
                     ScrollView {
                         VStack(spacing: 18) {
-                            chatEntryButton
+                            VStack(spacing: 8) {
+                                chatEntryButton
+                                chatGuideLink
+                            }
                             levelGrid
                             if !profile.hasAnyOptionalProfile {
                                 profilePromptBanner
@@ -180,6 +183,23 @@ struct HomeView: View {
         .buttonStyle(.plain)
     }
 
+    /// チャットボタン直下の小さな説明リンク（中国語キーボードの追加方法など）
+    private var chatGuideLink: some View {
+        NavigationLink(destination: ChatGuideView()) {
+            HStack(spacing: 4) {
+                Text("中国語でチャットするには")
+                Image(systemName: "chevron.right")
+                    .font(.caption2)
+            }
+            .font(.footnote)
+            .foregroundStyle(AppTheme.secondaryText)
+            .frame(maxWidth: .infinity, alignment: .trailing)
+            .padding(.horizontal, 4)
+            .frame(minHeight: 32)
+        }
+        .buttonStyle(.plain)
+    }
+
     // MARK: - 共通カード
 
     private func featureRow(
@@ -227,7 +247,7 @@ private struct LevelCard: View {
             Text("\(count) 単語")
                 .font(.caption)
                 .foregroundStyle(AppTheme.secondaryText)
-            Spacer(minLength: 32)
+            Spacer(minLength: 8)
             HStack {
                 Spacer()
                 Image(systemName: "rectangle.stack.fill")
@@ -236,7 +256,7 @@ private struct LevelCard: View {
             }
         }
         .padding(16)
-        .frame(maxWidth: .infinity, minHeight: 120, alignment: .topLeading)
+        .frame(maxWidth: .infinity, minHeight: 84, alignment: .topLeading)
         .glassCard()
         .overlay(
             RoundedRectangle(cornerRadius: 16, style: .continuous)
