@@ -33,7 +33,7 @@ _最終更新：2026-10-16_
 
 ## ✅ 完了済み
 
-- [x] v1.2.2 向けの変更をコミット済み（ビルド番号・バージョンの更新と App Store 提出は手作業）- 2026-10-16
+- [x] v1.2.2 (12) App Store 提出済み（審査待ち）・GitHub リリース登録済み - 2026-10-16
   - 計測イベント追加：character_selected / chat_opened / ai_consent_agreed / chat_api_error / chat_guide_opened
   - AIService で HTTP ステータスを判定（失敗時に AIServiceError.http）
   - チャット画面に、簡体中国語キーボード未追加の方向けの案内帯を追加
