@@ -6,7 +6,7 @@
 - リポジトリ：github.com/kscscafe/hanyuai
 - API：github.com/kscscafe/hanyuai-api（Vercel）
 - サポートサイト：https://officees.co.jp/hanyuai/
-- 現在のバージョン：v1.2.0 Build 10（審査通過・公開済み、GitHub リリース登録済み）
+- 現在のバージョン：v1.2.1 Build 11（GitHub リリース登録済み。App Store の公開状況は要確認。直前の公開済み版は v1.2.0 Build 10）
 
 ## 技術スタック
 - フロント：SwiftUI（iOS・iPhone only・ポートレート固定）
