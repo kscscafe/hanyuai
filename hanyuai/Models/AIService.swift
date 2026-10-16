@@ -1,5 +1,9 @@
 import Foundation
 
+enum AIServiceError: Error {
+    case http(Int)
+}
+
 class AIService {
     static let shared = AIService()
     private let apiURL = "\(APIConfig.baseURL)/api/chat"
@@ -43,7 +47,10 @@ class AIService {
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = try JSONSerialization.data(withJSONObject: body)
 
-        let (data, _) = try await URLSession.shared.data(for: request)
+        let (data, response) = try await URLSession.shared.data(for: request)
+        if let http = response as? HTTPURLResponse, !(200..<300).contains(http.statusCode) {
+            throw AIServiceError.http(http.statusCode)
+        }
         let json = try JSONSerialization.jsonObject(with: data) as? [String: Any]
         let choices = json?["choices"] as? [[String: Any]]
         let message = choices?.first?["message"] as? [String: Any]

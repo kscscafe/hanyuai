@@ -13,9 +13,22 @@ struct ChatView: View {
     @State private var characterState: CharacterState = CharacterState()
     @State private var showConsent: Bool = false
     @State private var showCopyToast: Bool = false
+    @State private var hasChineseKeyboard: Bool = ChatView.detectChineseKeyboard()
 
     @AppStorage("initialBonusGranted") private var initialBonusGranted: Bool = false
     @AppStorage("promoBannerDismissed") private var promoBannerDismissed: Bool = false
+    @AppStorage("chineseKeyboardTipDismissed") private var keyboardTipDismissed: Bool = false
+
+    private var showKeyboardTip: Bool {
+        !hasChineseKeyboard && !keyboardTipDismissed
+    }
+
+    /// 有効なキーボードに中国語（zh-*）が含まれるか
+    static func detectChineseKeyboard() -> Bool {
+        UITextInputMode.activeInputModes.contains {
+            ($0.primaryLanguage ?? "").hasPrefix("zh")
+        }
+    }
 
     private var currentMessages: [ChatMessage] {
         session.messagesByCharacter[character.rawValue] ?? []
@@ -94,6 +107,11 @@ struct ChatView: View {
             //     promoCodeBanner
             // }
 
+            // 中国語キーボード未追加の人向けの音声入力案内（追加済み or 閉じたら出ない）
+            if showKeyboardTip {
+                chineseKeyboardTip
+            }
+
             // 入力欄
             HStack(spacing: 12) {
                 TextField("メッセージを入力...", text: $inputText)
@@ -155,6 +173,8 @@ struct ChatView: View {
         .onAppear {
             // キャラ別履歴を使うため、レガシーな共有 messages のみクリアする（per-character 履歴は維持）
             session.clearMessages()
+            Analytics.logEvent("chat_opened", parameters: ["character": character.rawValue])
+            hasChineseKeyboard = ChatView.detectChineseKeyboard()
             prepareOpeningLine()
             refreshCharacterState()
             // AI 利用同意を未取得なら、最初に同意モーダルを出す
@@ -165,6 +185,38 @@ struct ChatView: View {
         .onChange(of: currentMessages.count) { _, _ in
             refreshCharacterState()
         }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
+            // 設定アプリでキーボードを追加して戻ってきたとき案内を消す
+            hasChineseKeyboard = ChatView.detectChineseKeyboard()
+        }
+    }
+
+    /// 音声で中国語を入力するための準備案内。
+    private var chineseKeyboardTip: some View {
+        HStack(alignment: .top, spacing: 8) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text("中国語でチャットするには")
+                    .font(.caption.bold())
+                    .foregroundColor(.primary)
+                Text("まず、iPhoneの「設定」アプリ → 一般 → キーボード → キーボード → 新しいキーボードを追加 → 簡体中国語（拼音）\n・文字で入力：キーボードの 🌐 で「簡体中国語」に切り替える\n・声で入力：キーボードのマイクをタップ →「普通話」を選ぶ")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            Spacer(minLength: 0)
+            Button {
+                keyboardTipDismissed = true
+            } label: {
+                Image(systemName: "xmark")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .padding(6)
+            }
+            .accessibilityLabel("案内を閉じる")
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 10)
+        .background(Color.purple.opacity(0.1))
     }
 
     /// ハート + 累計ターン数 + ステージ名のバッジ。テーマカラーに馴染ませた控えめなデザイン。
@@ -378,6 +430,13 @@ struct ChatView: View {
                     inputText = ""
                 }
             } catch {
+                var errorParams: [String: Any] = ["character": character.rawValue]
+                if let apiError = error as? AIServiceError, case .http(let code) = apiError {
+                    errorParams["status"] = code
+                } else {
+                    errorParams["status"] = (error as NSError).code
+                }
+                Analytics.logEvent("chat_api_error", parameters: errorParams)
                 await MainActor.run {
                     session.addMessage(role: "assistant", content: "エラーが発生しました。もう一度試してください。", characterId: character.rawValue)
                     isLoading = false

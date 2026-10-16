@@ -1,4 +1,5 @@
 import SwiftUI
+import FirebaseAnalytics
 
 struct CharacterSelectView: View {
     @Binding var selectedCharacter: ChatCharacter?
@@ -26,6 +27,7 @@ struct CharacterSelectView: View {
             VStack(spacing: 16) {
                 ForEach(ChatCharacter.allCases) { character in
                     CharacterCard(character: character) {
+                        Analytics.logEvent("character_selected", parameters: ["character": character.rawValue])
                         selectedCharacter = character
                         UserDefaults.standard.set(character.rawValue, forKey: "selectedCharacter")
                     }

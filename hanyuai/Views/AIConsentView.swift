@@ -1,4 +1,5 @@
 import SwiftUI
+import FirebaseAnalytics
 
 /// AIチャット機能を初めて使う前に表示する同意モーダル。
 /// 「同意して使う」を押すと AIConsentManager.shared.isAIConsentGiven が true になり、
@@ -49,6 +50,7 @@ struct AIConsentView: View {
 
     private func agree() {
         consent.isAIConsentGiven = true
+        Analytics.logEvent("ai_consent_agreed", parameters: nil)
         dismiss()
     }
 }
