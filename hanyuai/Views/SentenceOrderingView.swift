@@ -194,7 +194,7 @@ struct SentenceOrderingView: View {
                 }
                 .pickerStyle(.segmented)
 
-                Text("\(availableCount)文から10問を出題します")
+                Text("例文をランダムに10問出題します")
                     .font(.caption)
                     .foregroundStyle(AppTheme.secondaryText)
             }
