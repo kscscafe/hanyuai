@@ -33,8 +33,8 @@ _最終更新：2026-10-16_
 
 ## ✅ 完了済み
 
+- [x] 例文並び替え練習（音声／日本語訳）とホーム画面の学習導線を実装（feature/sentence-ordering-practice、Xcodeビルド確認待ち）- 2026-10-21
 - [x] v1.2.2 (12) App Store 提出済み（審査待ち）・GitHub リリース登録済み - 2026-10-16
-  - 例文並び替え練習（音声／日本語訳）とホーム画面の学習導線を実装 - 2026-10-21（feature/sentence-ordering-practice）
   - 計測イベント追加：character_selected / chat_opened / ai_consent_agreed / chat_api_error / chat_guide_opened
   - AIService で HTTP ステータスを判定（失敗時に AIServiceError.http）
   - チャット画面に、簡体中国語キーボード未追加の方向けの案内帯を追加
