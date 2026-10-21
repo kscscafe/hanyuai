@@ -24,8 +24,8 @@ _最終更新：2026-10-16_
 ## 🟢 優先度低（v2.0以降）
 
 - [ ] 聞き流し機能実装
-- [ ] 並び替え問題①（日本語訳あり）
-- [ ] 並び替え問題②（音声のみ）
+- [x] 並び替え問題①（日本語訳あり）：例文の語句を並べる練習を実装（feature/sentence-ordering-practice、Xcodeビルド確認待ち）
+- [x] 並び替え問題②（音声のみ）：例文音声から語句を並べる練習を実装（feature/sentence-ordering-practice、Xcodeビルド確認待ち）
 - [ ] AI模擬試験（読解）
 - [ ] ユーザープロフィール機能強化
 
@@ -34,6 +34,7 @@ _最終更新：2026-10-16_
 ## ✅ 完了済み
 
 - [x] v1.2.2 (12) App Store 提出済み（審査待ち）・GitHub リリース登録済み - 2026-10-16
+  - 例文並び替え練習（音声／日本語訳）とホーム画面の学習導線を実装 - 2026-10-21（feature/sentence-ordering-practice）
   - 計測イベント追加：character_selected / chat_opened / ai_consent_agreed / chat_api_error / chat_guide_opened
   - AIService で HTTP ステータスを判定（失敗時に AIServiceError.http）
   - チャット画面に、簡体中国語キーボード未追加の方向けの案内帯を追加
