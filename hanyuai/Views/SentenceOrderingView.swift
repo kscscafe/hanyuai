@@ -7,7 +7,7 @@
 import SwiftUI
 import FirebaseAnalytics
 
-enum SentenceOrderingMode: String, Identifiable {
+enum SentenceOrderingMode: String, Identifiable, Equatable {
     case listening
     case japanese
 
@@ -114,6 +114,8 @@ private enum SentenceQuestionFactory {
 
 struct SentenceOrderingView: View {
     let mode: SentenceOrderingMode
+
+    @EnvironmentObject private var session: ChatSession
 
     @Environment(\.dismiss) private var dismiss
     @State private var selectedLevel: HSKLevel = .hsk1
@@ -275,7 +277,7 @@ struct SentenceOrderingView: View {
                 .padding(.bottom, 8)
             }
 
-            if !ChatSession().isPremium {
+            if !session.isPremium {
                 BannerAdView(adUnitID: AdUnitID.banner)
                     .frame(height: 50)
             }
@@ -308,7 +310,7 @@ struct SentenceOrderingView: View {
             } else {
                 Text(question.word.exampleMeaning)
                     .font(.title3.weight(.semibold))
-                    .foregroundStyle(AppTheme.lightSurfacePrimaryText)
+                    .foregroundStyle(AppTheme.lightSurfaceText)
                     .multilineTextAlignment(.center)
                     .frame(maxWidth: .infinity)
             }
@@ -471,10 +473,13 @@ struct SentenceOrderingView: View {
                 .foregroundStyle(AppTheme.accent)
             }
 
-            Button("ホームに戻る") {
+            Button {
                 dismiss()
+            } label: {
+                Text("ホームに戻る")
+                    .primaryButtonBackground()
             }
-            .primaryButtonBackground()
+            .buttonStyle(.plain)
         }
         .padding(20)
         .onAppear {
