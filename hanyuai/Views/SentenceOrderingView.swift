@@ -176,7 +176,7 @@ struct SentenceOrderingView: View {
                     .font(.headline)
                     .multilineTextAlignment(.center)
                     .foregroundStyle(AppTheme.primaryText)
-                Text("単語ではなく、例文を組み立てて練習します。")
+                Text("登録されている例文を組み立てます。別の自然な言い方もあります。")
                     .font(.subheadline)
                     .multilineTextAlignment(.center)
                     .foregroundStyle(AppTheme.secondaryText)
@@ -378,7 +378,7 @@ struct SentenceOrderingView: View {
     private func tileLabel(_ text: String, selected: Bool) -> some View {
         Text(text)
             .font(.body.weight(.medium))
-            .foregroundStyle(selected ? AppTheme.lightSurfacePrimaryText : AppTheme.primaryText)
+            .foregroundStyle(selected ? AppTheme.lightSurfaceText : AppTheme.primaryText)
             .padding(.horizontal, 12)
             .padding(.vertical, 10)
             .frame(minWidth: 54)
@@ -394,13 +394,13 @@ struct SentenceOrderingView: View {
 
     private func answerFeedback(for question: SentenceOrderingQuestion) -> some View {
         VStack(alignment: .leading, spacing: 10) {
-            Label(isCorrect ? "正解" : "正しい語順はこちら", systemImage: isCorrect ? "checkmark.circle.fill" : "info.circle.fill")
+            Label(isCorrect ? "登録例文と一致" : "登録例文を確認", systemImage: isCorrect ? "checkmark.circle.fill" : "info.circle.fill")
                 .font(.headline)
                 .foregroundStyle(isCorrect ? .green : AppTheme.accent)
 
             Text(question.word.exampleChinese)
                 .font(.title2.weight(.semibold))
-                .foregroundStyle(AppTheme.lightSurfacePrimaryText)
+                .foregroundStyle(AppTheme.lightSurfaceText)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
             Text(question.word.examplePinyin)
@@ -440,11 +440,11 @@ struct SentenceOrderingView: View {
                 .font(.system(size: 54))
                 .foregroundStyle(AppTheme.accent)
 
-            Text("10問おつかれさまでした")
+            Text("練習おつかれさまでした")
                 .font(.title2.bold())
                 .foregroundStyle(AppTheme.primaryText)
 
-            Text("\(correctCount) / \(questions.count)問 正解")
+            Text("例文どおり：\(correctCount) / \(questions.count)問")
                 .font(.largeTitle.bold())
                 .foregroundStyle(AppTheme.primaryText)
 
@@ -463,7 +463,7 @@ struct SentenceOrderingView: View {
                 .padding(16)
                 .glassCard()
 
-                Button("間違えた文をもう一度") {
+                Button("例文と一致しなかった文を復習") {
                     questions = questions.filter { wrongQuestionIDs.contains($0.id) }
                     currentIndex = 0
                     wrongQuestionIDs = []
@@ -557,5 +557,6 @@ struct SentenceOrderingView: View {
     NavigationStack {
         SentenceOrderingView(mode: .listening)
     }
+    .environmentObject(ChatSession())
     .preferredColorScheme(.dark)
 }
