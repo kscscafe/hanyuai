@@ -550,10 +550,10 @@ struct SentenceOrderingView: View {
         isCorrect = false
     }
 
+    /// この練習では、音声と並べ替えタイルの不一致を防ぐため、
+    /// 録音ファイルのID対応に依存せず、設問に表示される例文をそのまま読み上げる。
     private func playExample(_ word: Word) {
-        if AudioPlayer.shared.play(bundlePath: word.exampleAudio) {
-            return
-        }
+        AudioPlayer.shared.stop()
         SpeechSynthesizer.shared.speak(word.exampleChinese)
     }
 }
