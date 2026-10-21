@@ -30,7 +30,7 @@ enum SentenceOrderingMode: String, Identifiable, Equatable {
     var instruction: String {
         switch self {
         case .listening: return "例文を聞いて、中国語の語句を並べてください。"
-        case .japanese: return "日本語訳を見て、中国語の語句を並べてください。"
+        case .japanese: return "日本語訳を聞いて、中国語の語句を並べてください。"
         }
     }
 }
@@ -177,10 +177,6 @@ struct SentenceOrderingView: View {
                     .font(.headline)
                     .multilineTextAlignment(.center)
                     .foregroundStyle(AppTheme.primaryText)
-                Text("登録されている例文を組み立てます。別の自然な言い方もあります。")
-                    .font(.subheadline)
-                    .multilineTextAlignment(.center)
-                    .foregroundStyle(AppTheme.secondaryText)
             }
             .padding(20)
             .frame(maxWidth: .infinity)
