@@ -77,10 +77,10 @@ struct HomeView: View {
     private var sentencePracticeSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             VStack(alignment: .leading, spacing: 4) {
-                Text("例文で練習")
+                Text("並び替え練習")
                     .font(.title3.bold())
                     .foregroundStyle(AppTheme.primaryText)
-                Text("中国語の文を、聞いて・読んで組み立てる")
+                Text("中国語の文を、聞いて・読んで並び替える")
                     .font(.caption)
                     .foregroundStyle(AppTheme.secondaryText)
             }
