@@ -394,28 +394,40 @@ struct SentenceOrderingView: View {
     }
 
     private func answerFeedback(for question: SentenceOrderingQuestion) -> some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Label(isCorrect ? "登録例文と一致" : "登録例文を確認", systemImage: isCorrect ? "checkmark.circle.fill" : "info.circle.fill")
+        VStack(alignment: .leading, spacing: 12) {
+            Label(isCorrect ? "正解" : "正解の例文", systemImage: isCorrect ? "checkmark.circle.fill" : "info.circle.fill")
                 .font(.headline)
                 .foregroundStyle(isCorrect ? .green : AppTheme.accent)
 
-            Text(question.word.exampleChinese)
-                .font(.title2.weight(.semibold))
-                .foregroundStyle(AppTheme.lightSurfaceText)
-                .frame(maxWidth: .infinity, alignment: .leading)
+            VStack(alignment: .leading, spacing: 6) {
+                Text("中国語")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(AppTheme.lightSurfaceSecondaryText)
+                Text(question.word.exampleChinese)
+                    .font(.title2.weight(.semibold))
+                    .foregroundStyle(AppTheme.lightSurfaceText)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+            VStack(alignment: .leading, spacing: 6) {
+                Text("日本語訳")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(AppTheme.lightSurfaceSecondaryText)
+                Text(question.word.exampleMeaning)
+                    .font(.body)
+                    .foregroundStyle(AppTheme.lightSurfaceText)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
 
             Text(question.word.examplePinyin)
                 .font(.callout)
                 .foregroundStyle(AppTheme.lightSurfaceSecondaryText)
-
-            Text(question.word.exampleMeaning)
-                .font(.callout)
-                .foregroundStyle(AppTheme.lightSurfaceSecondaryText)
+                .fixedSize(horizontal: false, vertical: true)
 
             HStack(spacing: 12) {
-                Text("今回の単語：\(question.word.word)")
+                Text("今回の単語：\\(question.word.word)")
                     .font(.caption)
-                    .foregroundStyle(AppTheme.secondaryText)
+                    .foregroundStyle(AppTheme.lightSurfaceSecondaryText)
                 Button {
                     playExample(question.word)
                 } label: {
@@ -430,7 +442,7 @@ struct SentenceOrderingView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
             RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .fill(AppTheme.cardBackground)
+                .fill(AppTheme.lightSurface)
         )
     }
 
