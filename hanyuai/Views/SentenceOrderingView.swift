@@ -250,10 +250,10 @@ struct SentenceOrderingView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 18) {
                     promptCard(for: question)
-                    tileArea
                     if hasAnswered {
                         answerFeedback(for: question)
                     }
+                    tileArea
                 }
                 .padding(20)
             }
