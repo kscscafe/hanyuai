@@ -19,16 +19,16 @@ struct HomeView: View {
                 VStack(spacing: 0) {
                     ScrollView {
                         VStack(spacing: 20) {
-                            sentencePracticeSection
+                            aiTutorSection
 
                             VStack(alignment: .leading, spacing: 12) {
                                 sectionHeading("単語カード")
                                 levelGrid
                             }
 
+                            sentencePracticeSection
                             diagnosisCard
                             favoritesCard
-                            aiTutorSection
 
                             if !profile.hasAnyOptionalProfile {
                                 profilePromptBanner
@@ -140,7 +140,7 @@ struct HomeView: View {
 
     private var aiTutorSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            sectionHeading("会話で練習")
+            sectionHeading("会話練習")
             chatEntryButton
             chatGuideLink
         }
