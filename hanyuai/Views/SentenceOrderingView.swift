@@ -550,17 +550,11 @@ struct SentenceOrderingView: View {
         isCorrect = false
     }
 
-    /// HSK4は用意済みの例文録音を使い、HSK1〜3は例文テキストを合成音声で読む。
+    /// HSK1〜4すべて、例文テキストを合成音声で読む。
     /// 再生前に前の音声を止め、設問と音声が混ざらないようにする。
     private func playExample(_ word: Word) {
         AudioPlayer.shared.stop()
         SpeechSynthesizer.shared.stop()
-
-        if word.level == .hsk4,
-           AudioPlayer.shared.play(bundlePath: word.exampleAudio) {
-            return
-        }
-
         SpeechSynthesizer.shared.speak(word.exampleChinese)
     }
 }
