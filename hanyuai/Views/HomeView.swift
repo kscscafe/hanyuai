@@ -18,17 +18,21 @@ struct HomeView: View {
                 AppTheme.background.ignoresSafeArea()
                 VStack(spacing: 0) {
                     ScrollView {
-                        VStack(spacing: 18) {
-                            VStack(spacing: 8) {
-                                chatEntryButton
-                                chatGuideLink
+                        VStack(spacing: 20) {
+                            sentencePracticeSection
+
+                            VStack(alignment: .leading, spacing: 12) {
+                                sectionHeading("単語カード")
+                                levelGrid
                             }
-                            levelGrid
+
+                            diagnosisCard
+                            favoritesCard
+                            aiTutorSection
+
                             if !profile.hasAnyOptionalProfile {
                                 profilePromptBanner
                             }
-                            diagnosisCard
-                            favoritesCard
                         }
                         .padding(20)
                     }
@@ -65,6 +69,80 @@ struct HomeView: View {
             .sheet(isPresented: $showProfileSettings) {
                 ProfileSettingsView()
             }
+        }
+    }
+
+    // MARK: - 例文トレーニング
+
+    private var sentencePracticeSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text("例文で練習")
+                    .font(.title3.bold())
+                    .foregroundStyle(AppTheme.primaryText)
+                Text("中国語の文を、聞いて・読んで組み立てる")
+                    .font(.caption)
+                    .foregroundStyle(AppTheme.secondaryText)
+            }
+
+            practiceModeRow(.listening, subtitle: "音声を聞いて語句を並べる")
+            practiceModeRow(.japanese, subtitle: "日本語訳から語句を並べる")
+        }
+        .padding(16)
+        .glassCard()
+    }
+
+    private func practiceModeRow(
+        _ mode: SentenceOrderingMode,
+        subtitle: String
+    ) -> some View {
+        NavigationLink {
+            SentenceOrderingView(mode: mode)
+        } label: {
+            HStack(spacing: 12) {
+                Image(systemName: mode.icon)
+                    .font(.title3.weight(.semibold))
+                    .foregroundStyle(.white)
+                    .frame(width: 42, height: 42)
+                    .background(Circle().fill(AppTheme.buttonGradient))
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(mode.title)
+                        .font(.headline)
+                        .foregroundStyle(AppTheme.primaryText)
+                    Text(subtitle)
+                        .font(.caption)
+                        .foregroundStyle(AppTheme.secondaryText)
+                }
+
+                Spacer(minLength: 4)
+
+                Image(systemName: "chevron.right")
+                    .font(.caption.weight(.bold))
+                    .foregroundStyle(AppTheme.tertiaryText)
+            }
+            .padding(12)
+            .background(
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    .fill(AppTheme.elevatedBackground)
+            )
+        }
+        .buttonStyle(.plain)
+    }
+
+    private func sectionHeading(_ title: String) -> some View {
+        Text(title)
+            .font(.title3.bold())
+            .foregroundStyle(AppTheme.primaryText)
+    }
+
+    // MARK: - AIチューター
+
+    private var aiTutorSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            sectionHeading("会話で練習")
+            chatEntryButton
+            chatGuideLink
         }
     }
 
