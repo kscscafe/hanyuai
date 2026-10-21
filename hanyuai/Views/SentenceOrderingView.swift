@@ -550,10 +550,17 @@ struct SentenceOrderingView: View {
         isCorrect = false
     }
 
-    /// この練習では、音声と並べ替えタイルの不一致を防ぐため、
-    /// 録音ファイルのID対応に依存せず、設問に表示される例文をそのまま読み上げる。
+    /// HSK4は用意済みの例文録音を使い、HSK1〜3は例文テキストを合成音声で読む。
+    /// 再生前に前の音声を止め、設問と音声が混ざらないようにする。
     private func playExample(_ word: Word) {
         AudioPlayer.shared.stop()
+        SpeechSynthesizer.shared.stop()
+
+        if word.level == .hsk4,
+           AudioPlayer.shared.play(bundlePath: word.exampleAudio) {
+            return
+        }
+
         SpeechSynthesizer.shared.speak(word.exampleChinese)
     }
 }
