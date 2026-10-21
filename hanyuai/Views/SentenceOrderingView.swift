@@ -425,7 +425,7 @@ struct SentenceOrderingView: View {
                 .fixedSize(horizontal: false, vertical: true)
 
             HStack(spacing: 12) {
-                Text("今回の単語：\\(question.word.word)")
+                Text("今回の単語：\(question.word.word)")
                     .font(.caption)
                     .foregroundStyle(AppTheme.lightSurfaceSecondaryText)
                 Button {
