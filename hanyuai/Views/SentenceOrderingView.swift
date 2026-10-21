@@ -127,6 +127,7 @@ struct SentenceOrderingView: View {
     @State private var isCorrect = false
     @State private var wrongQuestionIDs = Set<String>()
     @State private var hasStarted = false
+    @State private var didLogCompletion = false
 
     private var availableCount: Int {
         SentenceQuestionFactory.questions(for: selectedLevel).count
@@ -467,6 +468,7 @@ struct SentenceOrderingView: View {
                     questions = questions.filter { wrongQuestionIDs.contains($0.id) }
                     currentIndex = 0
                     wrongQuestionIDs = []
+                    didLogCompletion = false
                     resetQuestion()
                 }
                 .font(.headline)
@@ -483,6 +485,8 @@ struct SentenceOrderingView: View {
         }
         .padding(20)
         .onAppear {
+            guard !didLogCompletion else { return }
+            didLogCompletion = true
             Analytics.logEvent("sentence_ordering_completed", parameters: [
                 "mode": mode.rawValue,
                 "level": selectedLevel.label,
@@ -497,6 +501,7 @@ struct SentenceOrderingView: View {
         guard !questions.isEmpty else { return }
         currentIndex = 0
         wrongQuestionIDs = []
+        didLogCompletion = false
         hasStarted = true
         resetQuestion()
         Analytics.logEvent("sentence_ordering_started", parameters: [
