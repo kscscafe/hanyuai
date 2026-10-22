@@ -18,7 +18,8 @@ struct LearningGuideView: View {
                         )
                     }
                     step(number: 2, icon: "waveform", title: "例文の発音と声調を確認する",
-                         body: "例文の音声を聞き、文の中で使われる発音や声調を確かめてから、自分で声に出します。")
+                         body: "例文の音声を聞き、文の中で使われる発音や声調を確かめてから、自分で声に出します。",
+                         destination: { EmptyView() })
                     step(number: 3, icon: "textformat.abc", title: "語句を並べて文を作る",
                          body: "中国語の語順を考えながら語句を並べます。単語を知っている状態から、文を組み立てられる状態へ進みます。",
                          action: "並び替え練習を始める") {
@@ -30,7 +31,8 @@ struct LearningGuideView: View {
                         ChatEntryView()
                     }
                     step(number: 5, icon: "bookmark", title: "使いたい表現を記録する",
-                         body: "チューターの返答を長押しして、あとで使いたい表現を保存します。記録した文章は編集できます。")
+                         body: "チューターの返答を長押しして、あとで使いたい表現を保存します。記録した文章は編集できます。",
+                         destination: { EmptyView() })
                     step(number: 6, icon: "bubble.left.and.bubble.right", title: "覚えた表現を会話で使う",
                          body: "記録した中国語を見返して声に出し、AIチューターとの会話でも使ってみましょう。",
                          action: "AIチューターと話す") {
