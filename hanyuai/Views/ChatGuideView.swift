@@ -3,18 +3,12 @@
 //  hanyuai
 //
 //  「中国語でチャットするには」の説明画面。
-//  簡体中国語キーボードの追加手順と、文字・声での入力方法、最初に言ってみる3フレーズを案内する。
+//  中国語キーボードの設定と入力方法に加え、質問・表現の記録・チャットでの練習方法を案内する。
 
 import SwiftUI
 import FirebaseAnalytics
 
 struct ChatGuideView: View {
-    private let phrases: [(pinyin: String, chinese: String, japanese: String)] = [
-        ("nǐ hǎo", "你好！", "こんにちは"),
-        ("xièxie", "谢谢！", "ありがとう"),
-        ("zàijiàn", "再见！", "さようなら"),
-    ]
-
     var body: some View {
         ZStack {
             AppTheme.background.ignoresSafeArea()
@@ -33,33 +27,24 @@ struct ChatGuideView: View {
                             .foregroundStyle(AppTheme.secondaryText)
                         pathBox("文字で入力：キーボードの 🌐 で「簡体中国語」に切り替える\n声で入力：キーボードのマイクをタップ →「普通話」を選んで話す")
                     }
-                    stepCard(number: 3, title: "まずはこの3つを言ってみよう") {
-                        ForEach(phrases, id: \.chinese) { phrase in
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(phrase.pinyin)
-                                    .font(.caption)
-                                    .foregroundStyle(AppTheme.tertiaryText)
-                                Text(phrase.chinese)
-                                    .font(.title3.weight(.semibold))
-                                    .foregroundStyle(AppTheme.primaryText)
-                                Text(phrase.japanese)
-                                    .font(.caption)
-                                    .foregroundStyle(AppTheme.secondaryText)
-                            }
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(12)
-                            .background(
-                                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                                    .fill(AppTheme.background)
-                            )
-                        }
-                    }
-                    stepCard(number: 4, title: "わからなければ日本語でOK") {
-                        Text("中国語でなんと言えばいいか分からないときは、日本語で聞いてみてください。チューターが、中国語での言い方を教えてくれます。")
+                    stepCard(number: 3, title: "日本語で質問してみる") {
+                        Text("中国語でどう言えばいいか分からないときは、日本語で聞いてみてください。チューターが中国語での言い方を教えてくれます。")
                             .font(.subheadline)
                             .foregroundStyle(AppTheme.secondaryText)
                             .fixedSize(horizontal: false, vertical: true)
-                        pathBox("例：「ありがとうは中国語でなんて言うの？」")
+                        pathBox("例：「『私は〇〇です』は中国語でどう言いますか？」")
+                    }
+                    stepCard(number: 4, title: "使いたい表現を記録する") {
+                        Text("AIチューターとの会話の履歴を長押しして、「表現に記録」を選ぶと保存できます。保存した表現は、チャット画面のブックマークから見返せます。")
+                            .font(.subheadline)
+                            .foregroundStyle(AppTheme.secondaryText)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    stepCard(number: 5, title: "その表現をチャットで練習してみましょう") {
+                        Text("ブックマークから表現を見返して、AIチューターとの会話で使ってみましょう。")
+                            .font(.subheadline)
+                            .foregroundStyle(AppTheme.secondaryText)
+                            .fixedSize(horizontal: false, vertical: true)
                     }
                     startButton
                 }
@@ -86,7 +71,7 @@ struct ChatGuideView: View {
                 Text("小龍（シャオロン）")
                     .font(.caption)
                     .foregroundStyle(AppTheme.secondaryText)
-                Text("你好！まずは一言、入力してみよう。間違えても大丈夫だよ。")
+                Text("日本語で質問して大丈夫。知りたい表現を聞いてみよう。")
                     .font(.subheadline)
                     .foregroundStyle(AppTheme.primaryText)
                     .fixedSize(horizontal: false, vertical: true)
@@ -107,7 +92,7 @@ struct ChatGuideView: View {
     ) -> some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 10) {
-                Text("\(number)")
+                Text("\\(number)")
                     .font(.footnote.bold())
                     .foregroundStyle(.white)
                     .frame(width: 26, height: 26)
