@@ -45,13 +45,20 @@ private struct HomeDashboardView: View {
                     }
                 }
             }
-            .navigationTitle(
-                Text("HanYu").foregroundColor(.white)
-                + Text("AI").foregroundColor(Color(red: 0.10, green: 0.91, blue: 0.85))
-            )
+            .navigationTitle("")
+            .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(.hidden, for: .navigationBar)
             .toolbarColorScheme(.dark, for: .navigationBar)
             .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    HStack(spacing: 0) {
+                        Text("HanYu")
+                            .foregroundStyle(.white)
+                        Text("AI")
+                            .foregroundStyle(Color(red: 0.10, green: 0.91, blue: 0.85))
+                    }
+                    .font(.system(size: 25, weight: .bold, design: .rounded))
+                }
                 ToolbarItem(placement: .topBarTrailing) {
                     NavigationLink {
                         SavedExpressionsListView()
