@@ -67,7 +67,6 @@ struct LearningGuideView: View {
                                 SavedExpressionsListView()
                             }
 
-                        questionExample
 
                             stepLink(
                                 number: 6,
@@ -263,42 +262,6 @@ struct LearningGuideView: View {
                         .stroke(Color(red: 0.18, green: 0.42, blue: 0.51).opacity(0.35), lineWidth: 1)
                 )
             }
-    }
-
-    private var questionExample: some View {
-        Button {
-            selectedTab = .chat
-        } label: {
-            VStack(alignment: .leading, spacing: 12) {
-                Label("質問例", systemImage: "ellipsis.bubble.fill")
-                    .font(.headline)
-                    .foregroundStyle(cyan)
-
-                HStack(spacing: 10) {
-                    Text("自分の仕事や趣味を、\n中国語でどう紹介する？")
-                        .font(.system(size: 17, weight: .medium))
-                        .foregroundStyle(.white)
-                        .multilineTextAlignment(.leading)
-                    Spacer(minLength: 0)
-                    Image(systemName: "chevron.right")
-                        .font(.headline.bold())
-                        .foregroundStyle(Color(red: 0.55, green: 0.83, blue: 0.94))
-                }
-                .padding(14)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(card.opacity(0.95), in: RoundedRectangle(cornerRadius: 18, style: .continuous))
-            }
-            .padding(15)
-            .background(
-                RoundedRectangle(cornerRadius: 22, style: .continuous)
-                    .fill(card.opacity(0.46))
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 22, style: .continuous)
-                    .stroke(Color.white.opacity(0.06), lineWidth: 1)
-            )
-        }
-        .buttonStyle(.plain)
     }
 
 }
