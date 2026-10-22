@@ -6,7 +6,7 @@
 
 import SwiftUI
 
-struct HomeView: View {
+private struct HomeDashboardView: View {
     @EnvironmentObject private var favorites: FavoritesStore
     @EnvironmentObject private var session: ChatSession
     @ObservedObject private var profile = UserProfile.shared
@@ -352,9 +352,188 @@ private struct LevelCard: View {
     }
 }
 
+
+struct HomeView: View {
+    var body: some View {
+        TabView {
+            HomeDashboardView()
+                .tabItem { Label("ホーム", systemImage: "house.fill") }
+
+            NavigationStack {
+                ChatEntryView()
+            }
+            .tabItem { Label("会話", systemImage: "bubble.left") }
+
+            WordDeckTabView()
+                .tabItem { Label("単語・例文", systemImage: "book") }
+
+            OrderingModeTabView()
+                .tabItem { Label("並び替え", systemImage: "checklist") }
+
+            NavigationStack {
+                LearningGuideView()
+            }
+            .tabItem { Label("学び方", systemImage: "point.topleft.down.to.point.bottomright.curvepath") }
+        }
+        .tint(Color(red: 0.10, green: 0.91, blue: 0.85))
+        .toolbarBackground(Color(red: 0.015, green: 0.055, blue: 0.09), for: .tabBar)
+        .toolbarBackground(.visible, for: .tabBar)
+    }
+}
+
+private struct WordDeckTabView: View {
+    @EnvironmentObject private var favorites: FavoritesStore
+    private let columns = [GridItem(.flexible()), GridItem(.flexible())]
+
+    var body: some View {
+        NavigationStack {
+            ZStack {
+                AppTheme.background.ignoresSafeArea()
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 20) {
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("単語カード")
+                                .font(.title3.bold())
+                                .foregroundStyle(AppTheme.primaryText)
+
+                            LazyVGrid(columns: columns, spacing: 14) {
+                                ForEach(HSKLevel.allCases) { level in
+                                    NavigationLink {
+                                        FlashcardDeckView(
+                                            words: WordRepository.words(of: level),
+                                            title: level.label,
+                                            deckID: level.label
+                                        )
+                                    } label: {
+                                        LevelCard(level: level, count: WordRepository.words(of: level).count)
+                                    }
+                                    .buttonStyle(.plain)
+                                }
+                            }
+                        }
+
+                        NavigationLink {
+                            LevelTestView()
+                        } label: {
+                            featureRow(
+                                icon: "checklist",
+                                title: "レベル診断テスト",
+                                subtitle: "10問であなたの目安レベルを判定",
+                                gradient: AppTheme.buttonGradient
+                            )
+                        }
+                        .buttonStyle(.plain)
+
+                        let favoriteCount = favorites.favoriteIDs.count
+                        NavigationLink {
+                            FlashcardDeckView(
+                                words: favorites.favoriteWords(),
+                                title: "お気に入り",
+                                deckID: "favorites"
+                            )
+                        } label: {
+                            featureRow(
+                                icon: "heart.fill",
+                                title: "お気に入り",
+                                subtitle: favoriteCount == 0 ? "ハートをタップして登録" : "\(favoriteCount) 単語を復習",
+                                gradient: AppTheme.pinkGradient
+                            )
+                        }
+                        .buttonStyle(.plain)
+                        .disabled(favoriteCount == 0)
+                        .opacity(favoriteCount == 0 ? 0.55 : 1.0)
+                    }
+                    .padding(20)
+                }
+            }
+            .navigationTitle("単語カード")
+            .toolbarBackground(.hidden, for: .navigationBar)
+            .toolbarColorScheme(.dark, for: .navigationBar)
+        }
+    }
+
+    private func featureRow(
+        icon: String,
+        title: String,
+        subtitle: String,
+        gradient: LinearGradient
+    ) -> some View {
+        HStack(spacing: 16) {
+            Image(systemName: icon)
+                .font(.system(size: 26, weight: .semibold))
+                .foregroundStyle(.white)
+                .frame(width: 54, height: 54)
+                .background(Circle().fill(gradient))
+                .shadow(color: AppTheme.accent.opacity(0.35), radius: 8, y: 3)
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title)
+                    .font(.headline)
+                    .foregroundStyle(AppTheme.primaryText)
+                Text(subtitle)
+                    .font(.caption)
+                    .foregroundStyle(AppTheme.secondaryText)
+            }
+            Spacer()
+            Image(systemName: "chevron.right")
+                .foregroundStyle(AppTheme.tertiaryText)
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity)
+        .glassCard()
+    }
+}
+
+private struct OrderingModeTabView: View {
+    var body: some View {
+        NavigationStack {
+            ZStack {
+                AppTheme.background.ignoresSafeArea()
+                VStack(alignment: .leading, spacing: 14) {
+                    Text("中国語の文を、聞いて・読んで並び替える")
+                        .font(.subheadline)
+                        .foregroundStyle(AppTheme.secondaryText)
+                        .padding(.bottom, 4)
+
+                    orderingLink(.listening)
+                    orderingLink(.japanese)
+                    Spacer()
+                }
+                .padding(20)
+            }
+            .navigationTitle("並び替え練習")
+            .toolbarBackground(.hidden, for: .navigationBar)
+            .toolbarColorScheme(.dark, for: .navigationBar)
+        }
+    }
+
+    private func orderingLink(_ mode: SentenceOrderingMode) -> some View {
+        NavigationLink {
+            SentenceOrderingView(mode: mode)
+        } label: {
+            HStack(spacing: 12) {
+                Image(systemName: mode.icon)
+                    .font(.title3.weight(.semibold))
+                    .foregroundStyle(.white)
+                    .frame(width: 44, height: 44)
+                    .background(Circle().fill(AppTheme.buttonGradient))
+                Text(mode.title)
+                    .font(.headline)
+                    .foregroundStyle(AppTheme.primaryText)
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .foregroundStyle(AppTheme.tertiaryText)
+            }
+            .padding(14)
+            .glassCard()
+        }
+        .buttonStyle(.plain)
+    }
+}
+
 #Preview {
     HomeView()
         .environmentObject(FavoritesStore())
         .environmentObject(ChatSession())
+        .environmentObject(StoreKitManager())
         .preferredColorScheme(.dark)
 }
