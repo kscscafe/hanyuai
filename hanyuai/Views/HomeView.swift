@@ -276,6 +276,19 @@ struct HomeView: View {
             .frame(minHeight: 32)
         }
         .buttonStyle(.plain)
+        NavigationLink(destination: LearningGuideView()) {
+            HStack(spacing: 6) {
+                Image(systemName: "point.topleft.down.to.point.bottomright.curvepath")
+                Text("学び方ガイド")
+                Image(systemName: "chevron.right").font(.caption2)
+            }
+            .font(.footnote)
+            .foregroundStyle(AppTheme.secondaryText)
+            .frame(maxWidth: .infinity, alignment: .trailing)
+            .padding(.horizontal, 4)
+            .frame(minHeight: 32)
+        }
+        .buttonStyle(.plain)
     }
 
     // MARK: - 共通カード
