@@ -78,6 +78,8 @@ struct LearningGuideView: View {
                                 ChatEntryView()
                             }
 
+                        questionExample
+
                             stepLink(
                                 number: 6,
                                 icon: "bubble.left.and.bubble.right",
@@ -88,8 +90,6 @@ struct LearningGuideView: View {
                                 ChatEntryView()
                             }
                         }
-
-                        questionExample
                     }
                     .padding(.horizontal, 20)
                     .padding(.top, 12)
