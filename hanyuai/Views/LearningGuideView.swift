@@ -290,6 +290,8 @@ struct LearningGuideView: View {
         .buttonStyle(.plain)
     }
 
+}
+
 #Preview {
     NavigationStack {
         LearningGuideView()
