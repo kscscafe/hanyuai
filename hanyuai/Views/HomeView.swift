@@ -50,6 +50,15 @@ private struct HomeDashboardView: View {
             .toolbarColorScheme(.dark, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
+                    NavigationLink {
+                        SavedExpressionsListView()
+                    } label: {
+                        Image(systemName: "bookmark")
+                            .foregroundStyle(.white)
+                    }
+                    .accessibilityLabel("記録した表現")
+                }
+                ToolbarItem(placement: .topBarTrailing) {
                     Button {
                         showProfileSettings = true
                     } label: {
