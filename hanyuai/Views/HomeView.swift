@@ -11,6 +11,7 @@ struct HomeView: View {
     @EnvironmentObject private var session: ChatSession
     @ObservedObject private var profile = UserProfile.shared
     @State private var showProfileSettings = false
+    @StateObject private var savedExpressions = SavedExpressionsStore.shared
 
     var body: some View {
         NavigationStack {
@@ -216,7 +217,7 @@ struct HomeView: View {
     // MARK: - 記録した表現
 
     private var savedExpressionsCard: some View {
-        let count = SavedExpressionsStore.shared.expressions.count
+        let count = savedExpressions.expressions.count
         return NavigationLink {
             SavedExpressionsListView()
         } label: {
@@ -224,7 +225,7 @@ struct HomeView: View {
                 icon: "bookmark.fill",
                 gradient: AppTheme.buttonGradient,
                 title: "記録した表現",
-                subtitle: count == 0 ? "AIチューターの返答を長押しして記録" : "\\(count)件の表現を見返す"
+                subtitle: count == 0 ? "AIチューターの返答を長押しして記録" : "\(count)件の表現を見返す"
             )
         }
         .buttonStyle(.plain)
