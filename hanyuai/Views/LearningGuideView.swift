@@ -64,7 +64,7 @@ struct LearningGuideView: View {
                                 number: 4,
                                 icon: "bubble.left",
                                 title: "自分の言いたいことをAIに聞く",
-                                subtitle: nil
+                                subtitle: "自己紹介や仕事、趣味など、話したい内容を日本語で聞いてみる"
                             ) {
                                 ChatEntryView()
                             }
@@ -82,7 +82,8 @@ struct LearningGuideView: View {
                                 number: 6,
                                 icon: "bubble.left.and.bubble.right",
                                 title: "覚えた表現をAIチューターとの会話で使う",
-                                subtitle: nil
+                                subtitle: nil,
+                                isLast: true
                             ) {
                                 ChatEntryView()
                             }
@@ -186,58 +187,74 @@ struct LearningGuideView: View {
         icon: String,
         title: String,
         subtitle: String?,
+        isLast: Bool = false,
         @ViewBuilder destination: () -> Destination
     ) -> some View {
         NavigationLink(destination: destination()) {
-            HStack(spacing: 12) {
-                Text("\(number)")
-                    .font(.system(size: 15, weight: .bold, design: .rounded))
-                    .foregroundStyle(ink)
-                    .frame(width: 34, height: 34)
-                    .background(Circle().fill(cyan))
+            HStack(alignment: .top, spacing: 9) {
+                VStack(spacing: 0) {
+                    Text("\(number)")
+                        .font(.system(size: 15, weight: .bold, design: .rounded))
+                        .foregroundStyle(ink)
+                        .frame(width: 34, height: 34)
+                        .background(Circle().fill(cyan))
 
-                Image(systemName: icon)
-                    .font(.system(size: 26, weight: .medium))
-                    .symbolRenderingMode(.hierarchical)
-                    .foregroundStyle(cyan)
-                    .frame(width: 42, height: 44)
-
-                VStack(alignment: .leading, spacing: 3) {
-                    Text(title)
-                        .font(.system(size: 15, weight: .bold))
-                        .foregroundStyle(.white)
-                        .fixedSize(horizontal: false, vertical: true)
-                    if let subtitle {
-                        Text(subtitle)
-                            .font(.system(size: 12, weight: .medium))
-                            .foregroundStyle(Color(red: 0.61, green: 0.76, blue: 0.86))
-                            .fixedSize(horizontal: false, vertical: true)
+                    if !isLast {
+                        Rectangle()
+                            .fill(cyan.opacity(0.85))
+                            .frame(width: 2)
+                            .frame(maxHeight: .infinity)
                     }
                 }
+                .frame(width: 42)
 
-                Spacer(minLength: 0)
-
-                Image(systemName: "chevron.right")
-                    .font(.system(size: 14, weight: .bold))
-                    .foregroundStyle(Color(red: 0.62, green: 0.79, blue: 0.90))
-            }
-            .padding(.horizontal, 13)
-            .padding(.vertical, subtitle == nil ? 12 : 14)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(
-                RoundedRectangle(cornerRadius: 19, style: .continuous)
-                    .fill(
-                        LinearGradient(
-                            colors: [card.opacity(0.94), Color(red: 0.025, green: 0.085, blue: 0.13)],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
+                HStack(spacing: 12) {
+                    Image(systemName: icon)
+                        .font(.system(size: 27, weight: .medium))
+                        .symbolRenderingMode(.hierarchical)
+                        .foregroundStyle(cyan)
+                        .frame(width: 60, height: 60)
+                        .background(
+                            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                .fill(Color(red: 0.06, green: 0.18, blue: 0.25))
                         )
-                    )
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 19, style: .continuous)
-                    .stroke(Color(red: 0.18, green: 0.42, blue: 0.51).opacity(0.35), lineWidth: 1)
-            )
+
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(title)
+                            .font(.system(size: 15, weight: .bold))
+                            .foregroundStyle(.white)
+                            .fixedSize(horizontal: false, vertical: true)
+                        if let subtitle {
+                            Text(subtitle)
+                                .font(.system(size: 12, weight: .medium))
+                                .foregroundStyle(Color(red: 0.61, green: 0.76, blue: 0.86))
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                    }
+
+                    Spacer(minLength: 0)
+
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundStyle(Color(red: 0.62, green: 0.79, blue: 0.90))
+                }
+                .padding(12)
+                .frame(maxWidth: .infinity, minHeight: subtitle == nil ? 84 : 100, alignment: .leading)
+                .background(
+                    RoundedRectangle(cornerRadius: 19, style: .continuous)
+                        .fill(
+                            LinearGradient(
+                                colors: [card.opacity(0.94), Color(red: 0.025, green: 0.085, blue: 0.13)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 19, style: .continuous)
+                        .stroke(Color(red: 0.18, green: 0.42, blue: 0.51).opacity(0.35), lineWidth: 1)
+                )
+            }
         }
         .buttonStyle(.plain)
     }
