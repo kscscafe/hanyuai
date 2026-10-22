@@ -11,7 +11,7 @@ struct SavedExpressionsListView: View {
                 ContentUnavailableView(
                     "会話で使ってみたい表現を記録しましょう",
                     systemImage: "bookmark",
-                    description: Text("AIチューターの中国語の返答を長押しして「表現に記録」を選ぶと、ここに保存されます。")
+                    description: Text("AIチューターとの会話の履歴を長押しして、「表現に記録」を選ぶと、ここに保存されます。")
                 )
                 .foregroundStyle(AppTheme.primaryText)
             } else {
