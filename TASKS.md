@@ -1,9 +1,12 @@
 # TASKS.md — HanYuAI
-_最終更新：2026-10-16_
+_最終更新：2026-10-22_
 
 ---
 
 ## 🔴 優先度高
+
+- [ ] `feature/learning-guide`：MacBook/Xcodeでビルド・画面確認後に取り込み
+- [ ] `feature/saved-expressions`：MacBook/Xcodeでビルド・保存/再生確認後に取り込み
 
 - [ ] v1.3 検討：プロモコード入力 UI 復活 or ディープリンク化
   - REI50 のバックエンドは実装済み（commit 30aa0e5）だが、アプリ側入口がない
