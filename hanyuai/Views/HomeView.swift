@@ -143,6 +143,7 @@ struct HomeView: View {
             sectionHeading("会話練習")
             chatEntryButton
             chatGuideLink
+            learningGuideLink
         }
     }
 
@@ -276,6 +277,9 @@ struct HomeView: View {
             .frame(minHeight: 32)
         }
         .buttonStyle(.plain)
+    }
+
+    private var learningGuideLink: some View {
         NavigationLink(destination: LearningGuideView()) {
             HStack(spacing: 6) {
                 Image(systemName: "point.topleft.down.to.point.bottomright.curvepath")
