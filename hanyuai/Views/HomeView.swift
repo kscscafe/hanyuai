@@ -50,14 +50,6 @@ private struct HomeDashboardView: View {
             .toolbarColorScheme(.dark, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    NavigationLink {
-                        SearchView()
-                    } label: {
-                        Image(systemName: "magnifyingglass")
-                            .foregroundStyle(.white)
-                    }
-                }
-                ToolbarItem(placement: .topBarTrailing) {
                     Button {
                         showProfileSettings = true
                     } label: {
@@ -449,6 +441,17 @@ private struct WordDeckTabView: View {
             .navigationTitle("単語カード")
             .toolbarBackground(.hidden, for: .navigationBar)
             .toolbarColorScheme(.dark, for: .navigationBar)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    NavigationLink {
+                        SearchView()
+                    } label: {
+                        Image(systemName: "magnifyingglass")
+                            .foregroundStyle(.white)
+                    }
+                    .accessibilityLabel("単語検索")
+                }
+            }
         }
     }
 
