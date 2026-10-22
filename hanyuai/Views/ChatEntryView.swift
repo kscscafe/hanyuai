@@ -23,6 +23,16 @@ struct ChatEntryView: View {
                 }
         } else {
             CharacterSelectView(selectedCharacter: $selectedCharacter)
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        NavigationLink {
+                            SavedExpressionsListView()
+                        } label: {
+                            Image(systemName: "bookmark")
+                        }
+                        .accessibilityLabel("記録した表現")
+                    }
+                }
         }
     }
 }
