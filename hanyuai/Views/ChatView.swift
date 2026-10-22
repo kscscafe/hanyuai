@@ -13,6 +13,7 @@ struct ChatView: View {
     @State private var characterState: CharacterState = CharacterState()
     @State private var showConsent: Bool = false
     @State private var showCopyToast: Bool = false
+    @State private var toastText = "コピーしました"
     @State private var hasChineseKeyboard: Bool = ChatView.detectChineseKeyboard()
 
     @AppStorage("initialBonusGranted") private var initialBonusGranted: Bool = false
@@ -83,8 +84,19 @@ struct ChatView: View {
                         ForEach(currentMessages) { message in
                             MessageBubble(message: message, character: character)
                                 .id(message.id)
-                                .onLongPressGesture {
-                                    copyMessage(message.content)
+                                .contextMenu {
+                                    Button {
+                                        copyMessage(message.content)
+                                    } label: {
+                                        Label("コピー", systemImage: "doc.on.doc")
+                                    }
+                                    if message.role == "assistant" && containsChinese(message.content) {
+                                        Button {
+                                            saveExpression(message)
+                                        } label: {
+                                            Label("表現に記録", systemImage: "bookmark")
+                                        }
+                                    }
                                 }
                         }
                         if isLoading {
@@ -135,7 +147,7 @@ struct ChatView: View {
             }
         }
         if showCopyToast {
-            Text("コピーしました")
+            Text(toastText)
                 .font(.caption)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 8)
@@ -297,6 +309,47 @@ struct ChatView: View {
 
     private func copyMessage(_ content: String) {
         UIPasteboard.general.string = content
+        showToast("コピーしました")
+    }
+
+    private func saveExpression(_ message: ChatMessage) {
+        let question = precedingUserMessage(for: message)
+        let conversation: String
+        if let question, !question.isEmpty {
+            conversation = "質問：\\n\\(question)\\n\\n回答：\\n\\(message.content)"
+        } else {
+            conversation = message.content
+        }
+        let expression = SavedExpression(
+            characterID: character.rawValue,
+            conversation: conversation,
+            chineseText: extractChinese(from: message.content)
+        )
+        SavedExpressionsStore.shared.add(expression)
+        Analytics.logEvent("expression_saved", parameters: ["character": character.rawValue])
+        showToast("表現を記録しました")
+    }
+
+    private func precedingUserMessage(for message: ChatMessage) -> String? {
+        guard let index = currentMessages.firstIndex(where: { $0.id == message.id }) else { return nil }
+        return currentMessages[..<index].last(where: { $0.role == "user" })?.content
+    }
+
+    private func containsChinese(_ text: String) -> Bool {
+        text.range(of: "[\\u{4E00}-\\u{9FFF}\\u{3400}-\\u{4DBF}]", options: .regularExpression) != nil
+    }
+
+    private func extractChinese(from text: String) -> String {
+        guard let regex = try? NSRegularExpression(pattern: "[\\u{4E00}-\\u{9FFF}\\u{3400}-\\u{4DBF}]+") else { return "" }
+        let range = NSRange(text.startIndex..<text.endIndex, in: text)
+        return regex.matches(in: text, range: range).compactMap { match in
+            guard let matchRange = Range(match.range, in: text) else { return nil }
+            return String(text[matchRange])
+        }.joined(separator: " ")
+    }
+
+    private func showToast(_ message: String) {
+        toastText = message
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
         withAnimation { showCopyToast = true }
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
