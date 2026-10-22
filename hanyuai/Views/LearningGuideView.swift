@@ -2,7 +2,6 @@ import SwiftUI
 import FirebaseAnalytics
 
 struct LearningGuideView: View {
-    @Environment(\.dismiss) private var dismiss
     @State private var showProfileSettings = false
 
     private let ink = Color(red: 0.03, green: 0.10, blue: 0.15)
@@ -124,8 +123,6 @@ struct LearningGuideView: View {
                         )
                     }
                     .buttonStyle(.plain)
-
-                    bottomNavigation
                 }
                 .padding(.horizontal, 18)
                 .padding(.top, 10)
@@ -292,65 +289,6 @@ struct LearningGuideView: View {
         }
         .buttonStyle(.plain)
     }
-
-    private var bottomNavigation: some View {
-        HStack(spacing: 0) {
-            tabItem("house.fill", title: "ホーム", selected: true) { dismiss() }
-            tabLink("bubble.left", title: "会話") { ChatEntryView() }
-            tabLink("book", title: "単語") {
-                FlashcardDeckView(
-                    words: WordRepository.words(of: .hsk1),
-                    title: HSKLevel.hsk1.label,
-                    deckID: HSKLevel.hsk1.label
-                )
-            }
-            tabLink("checklist", title: "並び替え") {
-                SentenceOrderingView(mode: .japanese)
-            }
-        }
-        .padding(.top, 9)
-        .overlay(alignment: .top) {
-            Rectangle()
-                .fill(Color.white.opacity(0.08))
-                .frame(height: 1)
-        }
-    }
-
-    private func tabItem(
-        _ icon: String,
-        title: String,
-        selected: Bool = false,
-        action: @escaping () -> Void
-    ) -> some View {
-        Button(action: action) {
-            VStack(spacing: 4) {
-                Image(systemName: icon).font(.system(size: 22, weight: .semibold))
-                Text(title).font(.system(size: 11, weight: .semibold))
-            }
-            .foregroundStyle(selected ? cyan : Color(red: 0.63, green: 0.73, blue: 0.81))
-            .frame(maxWidth: .infinity)
-            .padding(.bottom, 3)
-        }
-        .buttonStyle(.plain)
-    }
-
-    private func tabLink<Destination: View>(
-        _ icon: String,
-        title: String,
-        @ViewBuilder destination: () -> Destination
-    ) -> some View {
-        NavigationLink(destination: destination()) {
-            VStack(spacing: 4) {
-                Image(systemName: icon).font(.system(size: 22, weight: .regular))
-                Text(title).font(.system(size: 11, weight: .medium))
-            }
-            .foregroundStyle(Color(red: 0.63, green: 0.73, blue: 0.81))
-            .frame(maxWidth: .infinity)
-            .padding(.bottom, 3)
-        }
-        .buttonStyle(.plain)
-    }
-}
 
 #Preview {
     NavigationStack {
