@@ -48,6 +48,13 @@ struct SavedExpressionsListView: View {
         .navigationTitle("記録した表現")
         .navigationBarTitleDisplayMode(.inline)
         .toolbarColorScheme(.dark, for: .navigationBar)
+        .toolbar {
+            if !store.expressions.isEmpty {
+                ToolbarItem(placement: .topBarTrailing) {
+                    EditButton()
+                }
+            }
+        }
         .onAppear { Analytics.logEvent("saved_expressions_opened", parameters: nil) }
     }
 }
@@ -57,6 +64,7 @@ struct SavedExpressionDetailView: View {
     @ObservedObject private var store = SavedExpressionsStore.shared
     @ObservedObject private var tts = TTSService.shared
     @Environment(\.dismiss) private var dismiss
+    @State private var showingDeleteConfirmation = false
 
     init(expression: SavedExpression) {
         _expression = State(initialValue: expression)
@@ -120,12 +128,31 @@ struct SavedExpressionDetailView: View {
         .toolbarColorScheme(.dark, for: .navigationBar)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
+                Button(role: .destructive) {
+                    showingDeleteConfirmation = true
+                } label: {
+                    Image(systemName: "trash")
+                }
+                .accessibilityLabel("表現を削除")
+            }
+            ToolbarItem(placement: .topBarTrailing) {
                 Button("保存") {
                     store.update(expression)
                     dismiss()
                 }
                 .foregroundStyle(AppTheme.primaryText)
             }
+        }
+        .confirmationDialog(
+            "この表現を削除しますか？",
+            isPresented: $showingDeleteConfirmation,
+            titleVisibility: .visible
+        ) {
+            Button("削除", role: .destructive) {
+                store.delete(expression)
+                dismiss()
+            }
+            Button("キャンセル", role: .cancel) {}
         }
         .onDisappear { store.update(expression) }
     }
