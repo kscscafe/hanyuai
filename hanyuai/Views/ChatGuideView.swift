@@ -35,7 +35,7 @@ struct ChatGuideView: View {
                         pathBox("例：「『私は〇〇です』は中国語でどう言いますか？」")
                     }
                     stepCard(number: 4, title: "使いたい表現を記録する") {
-                        Text("AIチューターとの会話の履歴を長押しして、「表現に記録」を選ぶと保存できます。保存した表現は、チャット画面のブックマークから見返せます。")
+                        Text("AIチューターとの会話の履歴を長押しして、「表現に記録」を選ぶと保存できます。保存した表現は、ブックマークから見返せます。")
                             .font(.subheadline)
                             .foregroundStyle(AppTheme.secondaryText)
                             .fixedSize(horizontal: false, vertical: true)
