@@ -316,7 +316,7 @@ struct ChatView: View {
         let question = precedingUserMessage(for: message)
         let conversation: String
         if let question, !question.isEmpty {
-            conversation = "質問：\\n\\(question)\\n\\n回答：\\n\\(message.content)"
+            conversation = "質問：\n\(question)\n\n回答：\n\(message.content)"
         } else {
             conversation = message.content
         }
