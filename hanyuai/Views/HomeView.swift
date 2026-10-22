@@ -29,6 +29,7 @@ struct HomeView: View {
                             sentencePracticeSection
                             diagnosisCard
                             favoritesCard
+                            savedExpressionsCard
 
                             if !profile.hasAnyOptionalProfile {
                                 profilePromptBanner
@@ -210,6 +211,23 @@ struct HomeView: View {
         .buttonStyle(.plain)
         .disabled(count == 0)
         .opacity(count == 0 ? 0.55 : 1.0)
+    }
+
+    // MARK: - 記録した表現
+
+    private var savedExpressionsCard: some View {
+        let count = SavedExpressionsStore.shared.expressions.count
+        return NavigationLink {
+            SavedExpressionsListView()
+        } label: {
+            featureRow(
+                icon: "bookmark.fill",
+                gradient: AppTheme.buttonGradient,
+                title: "記録した表現",
+                subtitle: count == 0 ? "AIチューターの返答を長押しして記録" : "\\(count)件の表現を見返す"
+            )
+        }
+        .buttonStyle(.plain)
     }
 
     // MARK: - HSK1〜4
