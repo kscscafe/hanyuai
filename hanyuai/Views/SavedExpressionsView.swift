@@ -9,7 +9,7 @@ struct SavedExpressionsListView: View {
             AppTheme.background.ignoresSafeArea()
             if store.expressions.isEmpty {
                 ContentUnavailableView(
-                    "チャットで使いたい表現を記録しましょう",
+                    "会話で使ってみたい表現を記録しましょう",
                     systemImage: "bookmark",
                     description: Text("AIチューターの中国語の返答を長押しして「表現に記録」を選ぶと、ここに保存されます。")
                 )
