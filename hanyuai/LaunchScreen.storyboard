@@ -22,22 +22,31 @@
                                     <constraint firstAttribute="height" constant="120" id="ICN-H-001"/>
                                 </constraints>
                             </imageView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="HanYuAI" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LBL-01-001">
-                                <rect key="frame" x="0.0" y="482" width="393" height="38"/>
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="32"/>
-                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <nil key="highlightedColor"/>
-                            </label>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="horizontal" alignment="center" distribution="fill" spacing="0" translatesAutoresizingMaskIntoConstraints="NO" id="STK-01-001">
+                                <rect key="frame" x="130.0" y="482" width="133" height="38"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="HanYu" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LBL-01-002">
+                                        <rect key="frame" x="0.0" y="0.0" width="88" height="38"/>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="32"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="AI" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LBL-01-003">
+                                        <rect key="frame" x="88" y="0.0" width="45" height="38"/>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="32"/>
+                                        <color key="textColor" red="0.1" green="0.91" blue="0.85" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                            </stackView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="ICN-01-001" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="CX-ICN-001"/>
                             <constraint firstItem="ICN-01-001" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="CY-ICN-001"/>
-                            <constraint firstItem="LBL-01-001" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="CX-LBL-001"/>
-                            <constraint firstItem="LBL-01-001" firstAttribute="top" secondItem="ICN-01-001" secondAttribute="bottom" constant="16" id="TOP-LBL-001"/>
-                            <constraint firstItem="LBL-01-001" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leading" id="L-LBL-001"/>
-                            <constraint firstAttribute="trailing" secondItem="LBL-01-001" secondAttribute="trailing" id="T-LBL-001"/>
+                            <constraint firstItem="STK-01-001" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="CX-STK-001"/>
+                            <constraint firstItem="STK-01-001" firstAttribute="top" secondItem="ICN-01-001" secondAttribute="bottom" constant="16" id="TOP-STK-001"/>
                         </constraints>
                     </view>
                 </viewController>
