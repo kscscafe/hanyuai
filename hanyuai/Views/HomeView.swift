@@ -496,21 +496,31 @@ private struct WordDeckTabView: View {
 }
 
 private struct OrderingModeTabView: View {
+    @EnvironmentObject private var session: ChatSession
+
     var body: some View {
         NavigationStack {
             ZStack {
                 AppTheme.background.ignoresSafeArea()
-                VStack(alignment: .leading, spacing: 14) {
-                    Text("中国語の文を、聞いて・読んで並び替える")
-                        .font(.subheadline)
-                        .foregroundStyle(AppTheme.secondaryText)
-                        .padding(.bottom, 4)
+                VStack(spacing: 0) {
+                    VStack(alignment: .leading, spacing: 14) {
+                        Text("中国語の文を、聞いて・読んで並び替える")
+                            .font(.subheadline)
+                            .foregroundStyle(AppTheme.secondaryText)
+                            .padding(.bottom, 4)
 
-                    orderingLink(.listening)
-                    orderingLink(.japanese)
-                    Spacer()
+                        orderingLink(.listening)
+                        orderingLink(.japanese)
+                        Spacer()
+                    }
+                    .padding(20)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+
+                    if !session.isPremium {
+                        BannerAdView(adUnitID: AdUnitID.banner)
+                            .frame(height: 50)
+                    }
                 }
-                .padding(20)
             }
             .navigationTitle("並び替え練習")
             .toolbarBackground(.hidden, for: .navigationBar)
