@@ -361,20 +361,20 @@ struct HomeView: View {
                 .tabItem { Label("ホーム", systemImage: "house.fill") }
 
             NavigationStack {
+                LearningGuideView()
+            }
+            .tabItem { Label("学び方", systemImage: "point.topleft.down.to.point.bottomright.curvepath") }
+
+            NavigationStack {
                 ChatEntryView()
             }
-            .tabItem { Label("会話", systemImage: "bubble.left") }
+            .tabItem { Label("チャット", systemImage: "bubble.left") }
 
             WordDeckTabView()
                 .tabItem { Label("単語・例文", systemImage: "book") }
 
             OrderingModeTabView()
                 .tabItem { Label("並び替え", systemImage: "checklist") }
-
-            NavigationStack {
-                LearningGuideView()
-            }
-            .tabItem { Label("学び方", systemImage: "point.topleft.down.to.point.bottomright.curvepath") }
         }
         .tint(Color(red: 0.10, green: 0.91, blue: 0.85))
         .toolbarBackground(Color(red: 0.015, green: 0.055, blue: 0.09), for: .tabBar)
