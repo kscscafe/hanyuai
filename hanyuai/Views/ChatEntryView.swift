@@ -12,6 +12,14 @@ struct ChatEntryView: View {
             ChatView(character: character)
                 .toolbar {
                     ToolbarItem(placement: .navigationBarTrailing) {
+                        NavigationLink {
+                            SavedExpressionsListView()
+                        } label: {
+                            Image(systemName: "bookmark")
+                        }
+                        .accessibilityLabel("記録した表現")
+                    }
+                    ToolbarItem(placement: .navigationBarTrailing) {
                         Button {
                             selectedCharacter = nil
                             UserDefaults.standard.removeObject(forKey: "selectedCharacter")
@@ -23,6 +31,16 @@ struct ChatEntryView: View {
                 }
         } else {
             CharacterSelectView(selectedCharacter: $selectedCharacter)
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        NavigationLink {
+                            SavedExpressionsListView()
+                        } label: {
+                            Image(systemName: "bookmark")
+                        }
+                        .accessibilityLabel("記録した表現")
+                    }
+                }
         }
     }
 }
