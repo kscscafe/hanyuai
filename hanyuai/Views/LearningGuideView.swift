@@ -2,113 +2,336 @@ import SwiftUI
 import FirebaseAnalytics
 
 struct LearningGuideView: View {
+    @Environment(\.dismiss) private var dismiss
+    @State private var showProfileSettings = false
+
+    private let ink = Color(red: 0.03, green: 0.10, blue: 0.15)
+    private let cyan = Color(red: 0.10, green: 0.91, blue: 0.85)
+    private let card = Color(red: 0.035, green: 0.13, blue: 0.19)
+
     var body: some View {
         ZStack {
-            AppTheme.background.ignoresSafeArea()
-            ScrollView {
-                VStack(spacing: 14) {
-                    intro
-                    step(number: 1, icon: "rectangle.stack", title: "単語カードで発音と声調を確かめる",
-                         body: "音声を聞いたら、自分の口でも言ってみましょう。声調を意識しながら、単語の音を身につけます。",
-                         action: "単語カードを見る") {
+            LinearGradient(
+                colors: [Color(red: 0.015, green: 0.055, blue: 0.09), ink, Color.black],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .ignoresSafeArea()
+
+            VStack(spacing: 0) {
+                header
+
+                ScrollView(showsIndicators: false) {
+                    VStack(alignment: .leading, spacing: 18) {
+                        titleBlock
+
+                        VStack(spacing: 10) {
+                            stepLink(
+                                number: 1,
+                                icon: "speaker.wave.2",
+                                title: "単語カードで発音と声調を確認",
+                                subtitle: "音を聞いて、自分の口で言ってみる"
+                            ) {
+                                FlashcardDeckView(
+                                    words: WordRepository.words(of: .hsk1),
+                                    title: HSKLevel.hsk1.label,
+                                    deckID: HSKLevel.hsk1.label
+                                )
+                            }
+
+                            stepLink(
+                                number: 2,
+                                icon: "person.wave.2",
+                                title: "例文で発音と声調を確かめる",
+                                subtitle: "文の中で聞いて、声に出してみる"
+                            ) {
+                                PronunciationCheckView(
+                                    word: WordRepository.words(of: .hsk1).first ?? .preview,
+                                    target: .example
+                                )
+                            }
+
+                            stepLink(
+                                number: 3,
+                                icon: "square.grid.2x2",
+                                title: "語句を並べて文を作る",
+                                subtitle: nil
+                            ) {
+                                SentenceOrderingView(mode: .japanese)
+                            }
+
+                            stepLink(
+                                number: 4,
+                                icon: "bubble.left",
+                                title: "自分の言いたいことをAIに聞く",
+                                subtitle: nil
+                            ) {
+                                ChatEntryView()
+                            }
+
+                            stepLink(
+                                number: 5,
+                                icon: "bookmark",
+                                title: "使う表現を保存する",
+                                subtitle: nil
+                            ) {
+                                ChatEntryView()
+                            }
+
+                            stepLink(
+                                number: 6,
+                                icon: "bubble.left.and.bubble.right",
+                                title: "覚えた表現をAIチューターとの会話で使う",
+                                subtitle: nil
+                            ) {
+                                ChatEntryView()
+                            }
+                        }
+
+                        questionExample
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.top, 12)
+                    .padding(.bottom, 14)
+                }
+
+                VStack(spacing: 10) {
+                    NavigationLink {
                         FlashcardDeckView(
                             words: WordRepository.words(of: .hsk1),
                             title: HSKLevel.hsk1.label,
                             deckID: HSKLevel.hsk1.label
                         )
+                    } label: {
+                        HStack(spacing: 10) {
+                            Spacer()
+                            Text("学習をはじめる")
+                                .font(.headline.bold())
+                            Image(systemName: "chevron.right")
+                                .font(.headline.bold())
+                            Spacer()
+                        }
+                        .foregroundStyle(ink)
+                        .padding(.vertical, 16)
+                        .background(
+                            LinearGradient(
+                                colors: [cyan, Color(red: 0.05, green: 0.78, blue: 0.80)],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            ),
+                            in: Capsule()
+                        )
                     }
-                    step(number: 2, icon: "waveform", title: "例文の発音と声調を確認する",
-                         body: "例文の音声を聞き、文の中で使われる発音や声調を確かめてから、自分で声に出します。",
-                         destination: { EmptyView() })
-                    step(number: 3, icon: "textformat.abc", title: "語句を並べて文を作る",
-                         body: "中国語の語順を考えながら語句を並べます。単語を知っている状態から、文を組み立てられる状態へ進みます。",
-                         action: "並び替え練習を始める") {
-                        SentenceOrderingView(mode: .japanese)
-                    }
-                    step(number: 4, icon: "character.bubble", title: "自分のことを中国語で表現する",
-                         body: "自己紹介や仕事、趣味など、自分が実際に話したい内容を日本語でチューターに質問してみましょう。",
-                         action: "AIチューターと話す") {
-                        ChatEntryView()
-                    }
-                    step(number: 5, icon: "bookmark", title: "使いたい表現を記録する",
-                         body: "チューターの返答を長押しして、あとで使いたい表現を保存します。記録した文章は編集できます。",
-                         destination: { EmptyView() })
-                    step(number: 6, icon: "bubble.left.and.bubble.right", title: "覚えた表現を会話で使う",
-                         body: "記録した中国語を見返して声に出し、AIチューターとの会話でも使ってみましょう。",
-                         action: "AIチューターと話す") {
-                        ChatEntryView()
-                    }
+                    .buttonStyle(.plain)
+
+                    bottomNavigation
                 }
-                .padding(20)
+                .padding(.horizontal, 18)
+                .padding(.top, 10)
+                .padding(.bottom, 4)
+                .background(.ultraThinMaterial.opacity(0.22))
             }
         }
-        .navigationTitle("学び方ガイド")
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbarColorScheme(.dark, for: .navigationBar)
+        .toolbar(.hidden, for: .navigationBar)
+        .sheet(isPresented: $showProfileSettings) {
+            ProfileSettingsView()
+        }
         .onAppear { Analytics.logEvent("learning_guide_opened", parameters: nil) }
     }
 
-    private var intro: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("単語から、自分の中国語へ")
-                .font(.title2.bold())
-                .foregroundStyle(AppTheme.primaryText)
-            Text("発音を確かめ、文を作り、自分が使いたい表現を身につけていきます。")
-                .font(.subheadline)
-                .foregroundStyle(AppTheme.secondaryText)
+    private var header: some View {
+        HStack {
+            HStack(spacing: 0) {
+                Text("HanYu")
+                    .foregroundStyle(.white)
+                Text("AI")
+                    .foregroundStyle(cyan)
+            }
+            .font(.system(size: 25, weight: .bold, design: .rounded))
+
+            Spacer()
+
+            Button {
+                showProfileSettings = true
+            } label: {
+                Image(systemName: "gearshape.fill")
+                    .font(.system(size: 17, weight: .semibold))
+                    .foregroundStyle(Color(red: 0.72, green: 0.88, blue: 0.96))
+                    .frame(width: 44, height: 44)
+                    .background(card.opacity(0.9), in: Circle())
+                    .overlay(Circle().stroke(Color.white.opacity(0.08), lineWidth: 1))
+            }
+            .buttonStyle(.plain)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(18)
-        .glassCard()
+        .padding(.horizontal, 20)
+        .padding(.top, 5)
+        .padding(.bottom, 4)
     }
 
-    private func step<Destination: View>(
+    private var titleBlock: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text("学び方ガイド")
+                .font(.system(size: 30, weight: .bold))
+                .foregroundStyle(.white)
+            Text("自分のことを、中国語で伝えられるように")
+                .font(.subheadline.weight(.medium))
+                .foregroundStyle(Color(red: 0.62, green: 0.75, blue: 0.84))
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(.bottom, 1)
+    }
+
+    private func stepLink<Destination: View>(
         number: Int,
         icon: String,
         title: String,
-        body: String,
-        action: String? = nil,
-        @ViewBuilder destination: () -> Destination = { EmptyView() }
+        subtitle: String?,
+        @ViewBuilder destination: () -> Destination
     ) -> some View {
-        VStack(alignment: .leading, spacing: 10) {
-            HStack(spacing: 10) {
+        NavigationLink(destination: destination()) {
+            HStack(spacing: 12) {
                 Text("\(number)")
-                    .font(.footnote.bold())
-                    .foregroundStyle(.white)
-                    .frame(width: 27, height: 27)
-                    .background(Circle().fill(AppTheme.accent))
+                    .font(.system(size: 15, weight: .bold, design: .rounded))
+                    .foregroundStyle(ink)
+                    .frame(width: 34, height: 34)
+                    .background(Circle().fill(cyan))
+
                 Image(systemName: icon)
-                    .font(.title3)
-                    .foregroundStyle(AppTheme.accent)
-                Text(title)
-                    .font(.headline)
-                    .foregroundStyle(AppTheme.primaryText)
-            }
-            Text(body)
-                .font(.subheadline)
-                .foregroundStyle(AppTheme.secondaryText)
-                .fixedSize(horizontal: false, vertical: true)
-            if let action {
-                NavigationLink(destination: destination()) {
-                    HStack {
-                        Text(action)
-                        Spacer()
-                        Image(systemName: "chevron.right")
+                    .font(.system(size: 26, weight: .medium))
+                    .symbolRenderingMode(.hierarchical)
+                    .foregroundStyle(cyan)
+                    .frame(width: 42, height: 44)
+
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(title)
+                        .font(.system(size: 15, weight: .bold))
+                        .foregroundStyle(.white)
+                        .fixedSize(horizontal: false, vertical: true)
+                    if let subtitle {
+                        Text(subtitle)
+                            .font(.system(size: 12, weight: .medium))
+                            .foregroundStyle(Color(red: 0.61, green: 0.76, blue: 0.86))
+                            .fixedSize(horizontal: false, vertical: true)
                     }
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(AppTheme.primaryText)
-                    .padding(12)
-                    .background(
-                        RoundedRectangle(cornerRadius: 12, style: .continuous)
-                            .fill(AppTheme.elevatedBackground)
-                    )
                 }
-                .buttonStyle(.plain)
+
+                Spacer(minLength: 0)
+
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 14, weight: .bold))
+                    .foregroundStyle(Color(red: 0.62, green: 0.79, blue: 0.90))
+            }
+            .padding(.horizontal, 13)
+            .padding(.vertical, subtitle == nil ? 12 : 14)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(
+                RoundedRectangle(cornerRadius: 19, style: .continuous)
+                    .fill(
+                        LinearGradient(
+                            colors: [card.opacity(0.94), Color(red: 0.025, green: 0.085, blue: 0.13)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 19, style: .continuous)
+                    .stroke(Color(red: 0.18, green: 0.42, blue: 0.51).opacity(0.35), lineWidth: 1)
+            )
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var questionExample: some View {
+        NavigationLink(destination: ChatEntryView()) {
+            VStack(alignment: .leading, spacing: 12) {
+                Label("質問例", systemImage: "ellipsis.bubble.fill")
+                    .font(.headline)
+                    .foregroundStyle(cyan)
+
+                HStack(spacing: 10) {
+                    Text("自分の仕事や趣味を、\n中国語でどう紹介する？")
+                        .font(.system(size: 17, weight: .medium))
+                        .foregroundStyle(.white)
+                        .multilineTextAlignment(.leading)
+                    Spacer(minLength: 0)
+                    Image(systemName: "chevron.right")
+                        .font(.headline.bold())
+                        .foregroundStyle(Color(red: 0.55, green: 0.83, blue: 0.94))
+                }
+                .padding(14)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(card.opacity(0.95), in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+            }
+            .padding(15)
+            .background(
+                RoundedRectangle(cornerRadius: 22, style: .continuous)
+                    .fill(card.opacity(0.46))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 22, style: .continuous)
+                    .stroke(Color.white.opacity(0.06), lineWidth: 1)
+            )
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var bottomNavigation: some View {
+        HStack(spacing: 0) {
+            tabItem("house.fill", title: "ホーム", selected: true) { dismiss() }
+            tabLink("bubble.left", title: "会話") { ChatEntryView() }
+            tabLink("book", title: "単語") {
+                FlashcardDeckView(
+                    words: WordRepository.words(of: .hsk1),
+                    title: HSKLevel.hsk1.label,
+                    deckID: HSKLevel.hsk1.label
+                )
+            }
+            tabLink("checklist", title: "並び替え") {
+                SentenceOrderingView(mode: .japanese)
             }
         }
-        .padding(16)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .glassCard()
+        .padding(.top, 9)
+        .overlay(alignment: .top) {
+            Rectangle()
+                .fill(Color.white.opacity(0.08))
+                .frame(height: 1)
+        }
+    }
+
+    private func tabItem(
+        _ icon: String,
+        title: String,
+        selected: Bool = false,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            VStack(spacing: 4) {
+                Image(systemName: icon).font(.system(size: 22, weight: .semibold))
+                Text(title).font(.system(size: 11, weight: .semibold))
+            }
+            .foregroundStyle(selected ? cyan : Color(red: 0.63, green: 0.73, blue: 0.81))
+            .frame(maxWidth: .infinity)
+            .padding(.bottom, 3)
+        }
+        .buttonStyle(.plain)
+    }
+
+    private func tabLink<Destination: View>(
+        _ icon: String,
+        title: String,
+        @ViewBuilder destination: () -> Destination
+    ) -> some View {
+        NavigationLink(destination: destination()) {
+            VStack(spacing: 4) {
+                Image(systemName: icon).font(.system(size: 22, weight: .regular))
+                Text(title).font(.system(size: 11, weight: .medium))
+            }
+            .foregroundStyle(Color(red: 0.63, green: 0.73, blue: 0.81))
+            .frame(maxWidth: .infinity)
+            .padding(.bottom, 3)
+        }
+        .buttonStyle(.plain)
     }
 }
 
@@ -116,5 +339,7 @@ struct LearningGuideView: View {
     NavigationStack {
         LearningGuideView()
     }
+    .environmentObject(FavoritesStore())
+    .environmentObject(ChatSession())
     .preferredColorScheme(.dark)
 }
