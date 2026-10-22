@@ -263,12 +263,12 @@ struct LearningGuideView: View {
                         .stroke(Color(red: 0.18, green: 0.42, blue: 0.51).opacity(0.35), lineWidth: 1)
                 )
             }
-        }
-        .buttonStyle(.plain)
     }
 
     private var questionExample: some View {
-        NavigationLink(destination: ChatEntryView()) {
+        Button {
+            selectedTab = .chat
+        } label: {
             VStack(alignment: .leading, spacing: 12) {
                 Label("質問例", systemImage: "ellipsis.bubble.fill")
                     .font(.headline)
