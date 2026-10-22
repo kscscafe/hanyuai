@@ -354,27 +354,42 @@ private struct LevelCard: View {
 }
 
 
+enum HomeTab: Hashable {
+    case home
+    case learning
+    case chat
+    case words
+    case ordering
+}
+
 struct HomeView: View {
+    @State private var selectedTab: HomeTab = .home
+
     var body: some View {
-        TabView {
+        TabView(selection: $selectedTab) {
             HomeDashboardView()
                 .tabItem { Label("ホーム", systemImage: "house.fill") }
+                .tag(HomeTab.home)
 
             NavigationStack {
-                LearningGuideView()
+                LearningGuideView(selectedTab: $selectedTab)
             }
             .tabItem { Label("学び方", systemImage: "point.topleft.down.to.point.bottomright.curvepath") }
+            .tag(HomeTab.learning)
 
             NavigationStack {
                 ChatEntryView()
             }
             .tabItem { Label("チャット", systemImage: "bubble.left") }
+            .tag(HomeTab.chat)
 
             WordDeckTabView()
                 .tabItem { Label("単語・例文", systemImage: "book") }
+                .tag(HomeTab.words)
 
             OrderingModeTabView()
                 .tabItem { Label("並び替え", systemImage: "checklist") }
+                .tag(HomeTab.ordering)
         }
         .tint(Color(red: 0.10, green: 0.91, blue: 0.85))
         .toolbarBackground(Color(red: 0.015, green: 0.055, blue: 0.09), for: .tabBar)

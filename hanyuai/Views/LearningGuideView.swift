@@ -2,6 +2,7 @@ import SwiftUI
 import FirebaseAnalytics
 
 struct LearningGuideView: View {
+    @Binding var selectedTab: HomeTab
     @State private var showProfileSettings = false
 
     private let ink = Color(red: 0.03, green: 0.10, blue: 0.15)
@@ -29,52 +30,41 @@ struct LearningGuideView: View {
                                 number: 1,
                                 icon: "speaker.wave.2",
                                 title: "単語カードで発音と声調を確認",
-                                subtitle: "音を聞いて、自分の口で言ってみる"
-                            ) {
-                                FlashcardDeckView(
-                                    words: WordRepository.words(of: .hsk1),
-                                    title: HSKLevel.hsk1.label,
-                                    deckID: HSKLevel.hsk1.label
-                                )
-                            }
+                                subtitle: "音を聞いて、自分の口で言ってみる",
+                                action: { selectedTab = .words }
+                            )
 
                             stepLink(
                                 number: 2,
                                 icon: "person.wave.2",
                                 title: "例文で発音と声調を確かめる",
-                                subtitle: "文の中で聞いて、声に出してみる"
-                            ) {
-                                PronunciationCheckView(
-                                    word: WordRepository.words(of: .hsk1).first ?? .preview,
-                                    target: .example
-                                )
-                            }
+                                subtitle: "文の中で聞いて、声に出してみる",
+                                action: { selectedTab = .words }
+                            )
 
                             stepLink(
                                 number: 3,
                                 icon: "square.grid.2x2",
                                 title: "語句を並べて文を作る",
-                                subtitle: nil
-                            ) {
-                                SentenceOrderingView(mode: .japanese)
-                            }
+                                subtitle: nil,
+                                action: { selectedTab = .ordering }
+                            )
 
                             stepLink(
                                 number: 4,
                                 icon: "bubble.left",
                                 title: "自分の言いたいことをAIに聞く",
-                                subtitle: "自己紹介や仕事、趣味など、話したい内容を日本語で聞いてみる"
-                            ) {
-                                ChatEntryView()
-                            }
+                                subtitle: "自己紹介や仕事、趣味など、話したい内容を日本語で聞いてみる",
+                                action: { selectedTab = .chat }
+                            )
 
-                            stepLink(
+                            stepNavigationLink(
                                 number: 5,
                                 icon: "bookmark",
                                 title: "使う表現を保存する",
                                 subtitle: nil
                             ) {
-                                ChatEntryView()
+                                SavedExpressionsListView()
                             }
 
                         questionExample
@@ -84,10 +74,9 @@ struct LearningGuideView: View {
                                 icon: "bubble.left.and.bubble.right",
                                 title: "覚えた表現をAIチューターとの会話で使う",
                                 subtitle: nil,
-                                isLast: true
-                            ) {
-                                ChatEntryView()
-                            }
+                                isLast: true,
+                                action: { selectedTab = .chat }
+                            )
                         }
                     }
                     .padding(.horizontal, 20)
@@ -96,12 +85,8 @@ struct LearningGuideView: View {
                 }
 
                 VStack(spacing: 10) {
-                    NavigationLink {
-                        FlashcardDeckView(
-                            words: WordRepository.words(of: .hsk1),
-                            title: HSKLevel.hsk1.label,
-                            deckID: HSKLevel.hsk1.label
-                        )
+                    Button {
+                        selectedTab = .words
                     } label: {
                         HStack(spacing: 10) {
                             Spacer()
@@ -179,7 +164,21 @@ struct LearningGuideView: View {
         .padding(.bottom, 1)
     }
 
-    private func stepLink<Destination: View>(
+    private func stepLink(
+        number: Int,
+        icon: String,
+        title: String,
+        subtitle: String?,
+        isLast: Bool = false,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            stepContent(number: number, icon: icon, title: title, subtitle: subtitle, isLast: isLast)
+        }
+        .buttonStyle(.plain)
+    }
+
+    private func stepNavigationLink<Destination: View>(
         number: Int,
         icon: String,
         title: String,
@@ -188,6 +187,18 @@ struct LearningGuideView: View {
         @ViewBuilder destination: () -> Destination
     ) -> some View {
         NavigationLink(destination: destination()) {
+            stepContent(number: number, icon: icon, title: title, subtitle: subtitle, isLast: isLast)
+        }
+        .buttonStyle(.plain)
+    }
+
+    private func stepContent(
+        number: Int,
+        icon: String,
+        title: String,
+        subtitle: String?,
+        isLast: Bool
+    ) -> some View {
             HStack(alignment: .top, spacing: 9) {
                 VStack(spacing: 0) {
                     Text("\(number)")
@@ -294,7 +305,7 @@ struct LearningGuideView: View {
 
 #Preview {
     NavigationStack {
-        LearningGuideView()
+        LearningGuideView(selectedTab: .constant(.learning))
     }
     .environmentObject(FavoritesStore())
     .environmentObject(ChatSession())
