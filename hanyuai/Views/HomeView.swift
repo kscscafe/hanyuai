@@ -382,6 +382,7 @@ struct HomeView: View {
 }
 
 private struct WordDeckTabView: View {
+    @EnvironmentObject private var favorites: FavoritesStore
     private let columns = [GridItem(.flexible()), GridItem(.flexible())]
 
     var body: some View {
@@ -389,19 +390,58 @@ private struct WordDeckTabView: View {
             ZStack {
                 AppTheme.background.ignoresSafeArea()
                 ScrollView {
-                    LazyVGrid(columns: columns, spacing: 14) {
-                        ForEach(HSKLevel.allCases) { level in
-                            NavigationLink {
-                                FlashcardDeckView(
-                                    words: WordRepository.words(of: level),
-                                    title: level.label,
-                                    deckID: level.label
-                                )
-                            } label: {
-                                LevelCard(level: level, count: WordRepository.words(of: level).count)
+                    VStack(alignment: .leading, spacing: 20) {
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("単語カード")
+                                .font(.title3.bold())
+                                .foregroundStyle(AppTheme.primaryText)
+
+                            LazyVGrid(columns: columns, spacing: 14) {
+                                ForEach(HSKLevel.allCases) { level in
+                                    NavigationLink {
+                                        FlashcardDeckView(
+                                            words: WordRepository.words(of: level),
+                                            title: level.label,
+                                            deckID: level.label
+                                        )
+                                    } label: {
+                                        LevelCard(level: level, count: WordRepository.words(of: level).count)
+                                    }
+                                    .buttonStyle(.plain)
+                                }
                             }
-                            .buttonStyle(.plain)
                         }
+
+                        NavigationLink {
+                            LevelTestView()
+                        } label: {
+                            featureRow(
+                                icon: "checklist",
+                                title: "レベル診断テスト",
+                                subtitle: "10問であなたの目安レベルを判定",
+                                gradient: AppTheme.buttonGradient
+                            )
+                        }
+                        .buttonStyle(.plain)
+
+                        let favoriteCount = favorites.favoriteIDs.count
+                        NavigationLink {
+                            FlashcardDeckView(
+                                words: favorites.favoriteWords(),
+                                title: "お気に入り",
+                                deckID: "favorites"
+                            )
+                        } label: {
+                            featureRow(
+                                icon: "heart.fill",
+                                title: "お気に入り",
+                                subtitle: favoriteCount == 0 ? "ハートをタップして登録" : "\(favoriteCount) 単語を復習",
+                                gradient: AppTheme.pinkGradient
+                            )
+                        }
+                        .buttonStyle(.plain)
+                        .disabled(favoriteCount == 0)
+                        .opacity(favoriteCount == 0 ? 0.55 : 1.0)
                     }
                     .padding(20)
                 }
@@ -410,6 +450,36 @@ private struct WordDeckTabView: View {
             .toolbarBackground(.hidden, for: .navigationBar)
             .toolbarColorScheme(.dark, for: .navigationBar)
         }
+    }
+
+    private func featureRow(
+        icon: String,
+        title: String,
+        subtitle: String,
+        gradient: LinearGradient
+    ) -> some View {
+        HStack(spacing: 16) {
+            Image(systemName: icon)
+                .font(.system(size: 26, weight: .semibold))
+                .foregroundStyle(.white)
+                .frame(width: 54, height: 54)
+                .background(Circle().fill(gradient))
+                .shadow(color: AppTheme.accent.opacity(0.35), radius: 8, y: 3)
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title)
+                    .font(.headline)
+                    .foregroundStyle(AppTheme.primaryText)
+                Text(subtitle)
+                    .font(.caption)
+                    .foregroundStyle(AppTheme.secondaryText)
+            }
+            Spacer()
+            Image(systemName: "chevron.right")
+                .foregroundStyle(AppTheme.tertiaryText)
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity)
+        .glassCard()
     }
 }
 
