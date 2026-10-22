@@ -45,7 +45,10 @@ private struct HomeDashboardView: View {
                     }
                 }
             }
-            .navigationTitle("HanYuAI")
+            .navigationTitle(
+                Text("HanYu").foregroundColor(.white)
+                + Text("AI").foregroundColor(Color(red: 0.10, green: 0.91, blue: 0.85))
+            )
             .toolbarBackground(.hidden, for: .navigationBar)
             .toolbarColorScheme(.dark, for: .navigationBar)
             .toolbar {
