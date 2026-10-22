@@ -375,67 +375,76 @@ struct HomeView: View {
 
 private struct WordDeckTabView: View {
     @EnvironmentObject private var favorites: FavoritesStore
+    @EnvironmentObject private var session: ChatSession
     private let columns = [GridItem(.flexible()), GridItem(.flexible())]
 
     var body: some View {
         NavigationStack {
             ZStack {
                 AppTheme.background.ignoresSafeArea()
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 20) {
-                        VStack(alignment: .leading, spacing: 12) {
-                            Text("単語カード")
-                                .font(.title3.bold())
-                                .foregroundStyle(AppTheme.primaryText)
+                VStack(spacing: 0) {
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 20) {
+                            VStack(alignment: .leading, spacing: 12) {
+                                Text("単語カード")
+                                    .font(.title3.bold())
+                                    .foregroundStyle(AppTheme.primaryText)
 
-                            LazyVGrid(columns: columns, spacing: 14) {
-                                ForEach(HSKLevel.allCases) { level in
-                                    NavigationLink {
-                                        FlashcardDeckView(
-                                            words: WordRepository.words(of: level),
-                                            title: level.label,
-                                            deckID: level.label
-                                        )
-                                    } label: {
-                                        LevelCard(level: level, count: WordRepository.words(of: level).count)
+                                LazyVGrid(columns: columns, spacing: 14) {
+                                    ForEach(HSKLevel.allCases) { level in
+                                        NavigationLink {
+                                            FlashcardDeckView(
+                                                words: WordRepository.words(of: level),
+                                                title: level.label,
+                                                deckID: level.label
+                                            )
+                                        } label: {
+                                            LevelCard(level: level, count: WordRepository.words(of: level).count)
+                                        }
+                                        .buttonStyle(.plain)
                                     }
-                                    .buttonStyle(.plain)
                                 }
                             }
-                        }
 
-                        NavigationLink {
-                            LevelTestView()
-                        } label: {
-                            featureRow(
-                                icon: "checklist",
-                                title: "レベル診断テスト",
-                                subtitle: "10問であなたの目安レベルを判定",
-                                gradient: AppTheme.buttonGradient
-                            )
-                        }
-                        .buttonStyle(.plain)
+                            NavigationLink {
+                                LevelTestView()
+                            } label: {
+                                featureRow(
+                                    icon: "checklist",
+                                    title: "レベル診断テスト",
+                                    subtitle: "10問であなたの目安レベルを判定",
+                                    gradient: AppTheme.buttonGradient
+                                )
+                            }
+                            .buttonStyle(.plain)
 
-                        let favoriteCount = favorites.favoriteIDs.count
-                        NavigationLink {
-                            FlashcardDeckView(
-                                words: favorites.favoriteWords(),
-                                title: "お気に入り",
-                                deckID: "favorites"
-                            )
-                        } label: {
-                            featureRow(
-                                icon: "heart.fill",
-                                title: "お気に入り",
-                                subtitle: favoriteCount == 0 ? "ハートをタップして登録" : "\(favoriteCount) 単語を復習",
-                                gradient: AppTheme.pinkGradient
-                            )
+                            let favoriteCount = favorites.favoriteIDs.count
+                            NavigationLink {
+                                FlashcardDeckView(
+                                    words: favorites.favoriteWords(),
+                                    title: "お気に入り",
+                                    deckID: "favorites"
+                                )
+                            } label: {
+                                featureRow(
+                                    icon: "heart.fill",
+                                    title: "お気に入り",
+                                    subtitle: favoriteCount == 0 ? "ハートをタップして登録" : "\(favoriteCount) 単語を復習",
+                                    gradient: AppTheme.pinkGradient
+                                )
+                            }
+                            .buttonStyle(.plain)
+                            .disabled(favoriteCount == 0)
+                            .opacity(favoriteCount == 0 ? 0.55 : 1.0)
                         }
-                        .buttonStyle(.plain)
-                        .disabled(favoriteCount == 0)
-                        .opacity(favoriteCount == 0 ? 0.55 : 1.0)
+                        .padding(20)
                     }
-                    .padding(20)
+                    .scrollContentBackground(.hidden)
+
+                    if !session.isPremium {
+                        BannerAdView(adUnitID: AdUnitID.banner)
+                            .frame(height: 50)
+                    }
                 }
             }
             .navigationTitle("単語カード")
