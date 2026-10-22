@@ -15,6 +15,9 @@ struct SearchView: View {
             AppTheme.background.ignoresSafeArea()
             VStack(spacing: 0) {
                 levelChips
+                searchField
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 8)
                 List {
                     ForEach(filtered) { word in
                         NavigationLink {
@@ -44,11 +47,35 @@ struct SearchView: View {
                 }
             }
         }
-        .navigationTitle("単語検索")
+        .navigationTitle("単語帳")
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(.hidden, for: .navigationBar)
         .toolbarColorScheme(.dark, for: .navigationBar)
-        .searchable(text: $query, prompt: "漢字 / 意味")
+    }
+
+    private var searchField: some View {
+        HStack(spacing: 10) {
+            Image(systemName: "magnifyingglass")
+                .foregroundStyle(AppTheme.secondaryText)
+            TextField("漢字・拼音・意味で検索", text: $query)
+                .textInputAutocapitalization(.never)
+                .autocorrectionDisabled()
+                .foregroundStyle(AppTheme.primaryText)
+            if !query.isEmpty {
+                Button {
+                    query = ""
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundStyle(AppTheme.secondaryText)
+                }
+                .accessibilityLabel("検索文字を消去")
+            }
+        }
+        .padding(12)
+        .background(
+            AppTheme.cardBackground,
+            in: RoundedRectangle(cornerRadius: 12, style: .continuous)
+        )
     }
 
     // MARK: - レベルチップ
@@ -106,7 +133,9 @@ struct SearchView: View {
         let trimmed = query.trimmingCharacters(in: .whitespaces)
         guard !trimmed.isEmpty else { return pool }
         return pool.filter { word in
-            word.word.contains(trimmed) || word.meaning.contains(trimmed)
+            word.word.localizedCaseInsensitiveContains(trimmed)
+                || word.pinyin.localizedCaseInsensitiveContains(trimmed)
+                || word.meaning.localizedCaseInsensitiveContains(trimmed)
         }
     }
 }
