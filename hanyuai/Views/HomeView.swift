@@ -50,7 +50,7 @@ private struct HomeDashboardView: View {
             .toolbarBackground(.hidden, for: .navigationBar)
             .toolbarColorScheme(.dark, for: .navigationBar)
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
+                ToolbarItem(placement: .principal) {
                     HStack(spacing: 0) {
                         Text("HanYu")
                             .foregroundStyle(.white)
