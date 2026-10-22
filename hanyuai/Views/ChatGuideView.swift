@@ -92,7 +92,7 @@ struct ChatGuideView: View {
     ) -> some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 10) {
-                Text("\\(number)")
+                Text("\(number)")
                     .font(.footnote.bold())
                     .foregroundStyle(.white)
                     .frame(width: 26, height: 26)
