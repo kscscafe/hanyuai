@@ -365,7 +365,7 @@ struct HomeView: View {
             .tabItem { Label("会話", systemImage: "bubble.left") }
 
             WordDeckTabView()
-                .tabItem { Label("単語", systemImage: "book") }
+                .tabItem { Label("単語・例文", systemImage: "book") }
 
             OrderingModeTabView()
                 .tabItem { Label("並び替え", systemImage: "checklist") }
