@@ -387,32 +387,34 @@ private struct LevelCard: View {
     let count: Int
 
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: 8) {
             Image(systemName: "book.fill")
-                .font(.system(size: 24, weight: .semibold))
+                .font(.system(size: 21, weight: .semibold))
                 .foregroundStyle(iconForeground)
-                .frame(width: 54, height: 54)
+                .frame(width: 46, height: 46)
                 .background(
-                    RoundedRectangle(cornerRadius: 15, style: .continuous)
+                    RoundedRectangle(cornerRadius: 13, style: .continuous)
                         .fill(iconGradient)
                 )
                 .shadow(color: accentColor.opacity(0.28), radius: 8, y: 3)
 
             Text(level.label.replacingOccurrences(of: "HSK", with: "HSK "))
-                .font(.headline)
+                .font(.subheadline.bold())
                 .foregroundStyle(AppTheme.primaryText)
                 .lineLimit(1)
+                .minimumScaleFactor(0.82)
+                .layoutPriority(1)
 
-            Spacer(minLength: 2)
+            Spacer(minLength: 0)
 
             Image(systemName: "chevron.right")
                 .font(.subheadline.weight(.bold))
                 .foregroundStyle(.white)
-                .frame(width: 34, height: 34)
+                .frame(width: 30, height: 30)
                 .background(Circle().fill(Color.white.opacity(0.10)))
         }
-        .padding(12)
-        .frame(maxWidth: .infinity, minHeight: 78)
+        .padding(10)
+        .frame(maxWidth: .infinity, minHeight: 68)
         .background(
             RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .fill(Color(red: 0.025, green: 0.15, blue: 0.25))
