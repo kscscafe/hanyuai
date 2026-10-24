@@ -11,6 +11,7 @@ private struct HomeDashboardView: View {
     @EnvironmentObject private var session: ChatSession
     @ObservedObject private var profile = UserProfile.shared
     @State private var showProfileSettings = false
+    @State private var showChatGuide = false
 
     var body: some View {
         NavigationStack {
@@ -47,6 +48,9 @@ private struct HomeDashboardView: View {
             .toolbar(.hidden, for: .navigationBar)
             .sheet(isPresented: $showProfileSettings) {
                 ProfileSettingsView()
+            }
+            .navigationDestination(isPresented: $showChatGuide) {
+                ChatGuideView()
             }
         }
     }
@@ -326,7 +330,9 @@ private struct HomeDashboardView: View {
     }
 
     private var chatGuideLink: some View {
-        NavigationLink(destination: ChatGuideView()) {
+        Button {
+            showChatGuide = true
+        } label: {
             HStack(spacing: 12) {
                 Image(systemName: "questionmark.circle")
                     .font(.title2)
@@ -342,9 +348,11 @@ private struct HomeDashboardView: View {
                     .font(.subheadline.weight(.bold))
                     .foregroundStyle(Color(red: 0.48, green: 0.45, blue: 0.92))
             }
-            .frame(minHeight: 34)
+            .frame(maxWidth: .infinity, minHeight: 44)
+            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+        .accessibilityLabel("中国語でチャットするには")
     }
 
     // MARK: - 共通カード
