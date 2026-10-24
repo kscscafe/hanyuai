@@ -64,6 +64,7 @@ struct ChatGuideView: View {
                 } label: {
                     Image(systemName: "xmark")
                         .font(.body.weight(.semibold))
+                        .foregroundStyle(AppTheme.accent)
                 }
                 .accessibilityLabel("閉じる")
             }
