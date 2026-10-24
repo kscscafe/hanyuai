@@ -11,30 +11,30 @@ private struct HomeDashboardView: View {
     @EnvironmentObject private var session: ChatSession
     @ObservedObject private var profile = UserProfile.shared
     @State private var showProfileSettings = false
+    @State private var showChatGuide = false
 
     var body: some View {
         NavigationStack {
             ZStack {
-                AppTheme.background.ignoresSafeArea()
+                homeBackground
+                    .ignoresSafeArea()
+
                 VStack(spacing: 0) {
                     ScrollView {
-                        VStack(spacing: 20) {
+                        VStack(spacing: 24) {
+                            homeHeader
                             aiTutorSection
 
                             VStack(alignment: .leading, spacing: 12) {
-                                sectionHeading("単語カード")
+                                sectionHeading("単語カード", icon: "book")
                                 levelGrid
                             }
 
                             sentencePracticeSection
-                            diagnosisCard
-                            favoritesCard
-
-                            if !profile.hasAnyOptionalProfile {
-                                profilePromptBanner
-                            }
                         }
-                        .padding(20)
+                        .padding(.horizontal, 20)
+                        .padding(.top, 12)
+                        .padding(.bottom, 20)
                     }
                     .scrollContentBackground(.hidden)
 
@@ -45,41 +45,61 @@ private struct HomeDashboardView: View {
                     }
                 }
             }
-            .navigationTitle("")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(.hidden, for: .navigationBar)
-            .toolbarColorScheme(.dark, for: .navigationBar)
-            .toolbar {
-                ToolbarItem(placement: .principal) {
-                    HStack(spacing: 0) {
-                        Text("HanYu")
-                            .foregroundStyle(.white)
-                        Text("AI")
-                            .foregroundStyle(Color(red: 0.10, green: 0.91, blue: 0.85))
-                    }
-                    .font(.system(size: 25, weight: .bold, design: .rounded))
-                }
-                ToolbarItem(placement: .topBarTrailing) {
-                    NavigationLink {
-                        SavedExpressionsListView()
-                    } label: {
-                        Image(systemName: "bookmark")
-                            .foregroundStyle(.white)
-                    }
-                    .accessibilityLabel("記録した表現")
-                }
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        showProfileSettings = true
-                    } label: {
-                        Image(systemName: "gearshape")
-                            .foregroundStyle(.white)
-                    }
-                }
-            }
+            .toolbar(.hidden, for: .navigationBar)
             .sheet(isPresented: $showProfileSettings) {
                 ProfileSettingsView()
             }
+            .navigationDestination(isPresented: $showChatGuide) {
+                ChatGuideView()
+            }
+        }
+    }
+
+    // MARK: - 背景・ヘッダー
+
+    private var homeBackground: LinearGradient {
+        LinearGradient(
+            colors: [
+                Color(red: 0.015, green: 0.070, blue: 0.120),
+                Color(red: 0.010, green: 0.105, blue: 0.175),
+                Color(red: 0.010, green: 0.055, blue: 0.095),
+            ],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+    }
+
+    private var homeHeader: some View {
+        HStack(spacing: 16) {
+            HStack(spacing: 0) {
+                Text("HanYu")
+                    .foregroundStyle(.white)
+                Text("AI")
+                    .foregroundStyle(Color(red: 0.10, green: 0.91, blue: 0.85))
+            }
+            .font(.system(size: 34, weight: .bold, design: .rounded))
+
+            Spacer()
+
+            NavigationLink {
+                SavedExpressionsListView()
+            } label: {
+                Image(systemName: "bookmark")
+                    .font(.system(size: 24, weight: .medium))
+                    .foregroundStyle(.white)
+                    .frame(width: 44, height: 44)
+            }
+            .accessibilityLabel("記録した表現")
+
+            Button {
+                showProfileSettings = true
+            } label: {
+                Image(systemName: "gearshape")
+                    .font(.system(size: 25, weight: .medium))
+                    .foregroundStyle(.white)
+                    .frame(width: 44, height: 44)
+            }
+            .accessibilityLabel("設定")
         }
     }
 
@@ -87,73 +107,101 @@ private struct HomeDashboardView: View {
 
     private var sentencePracticeSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            VStack(alignment: .leading, spacing: 4) {
-                Text("並び替え練習")
-                    .font(.title3.bold())
-                    .foregroundStyle(AppTheme.primaryText)
-                Text("中国語の文を、聞いて・読んで並び替える")
-                    .font(.caption)
-                    .foregroundStyle(AppTheme.secondaryText)
-            }
+            sectionHeading("並び替え練習", icon: "line.3.horizontal.decrease")
 
-            practiceModeRow(.listening, subtitle: "音声を聞いて語句を並べる")
-            practiceModeRow(.japanese, subtitle: "日本語訳から語句を並べる")
+            practiceModeRow(.listening)
+            practiceModeRow(.japanese)
         }
-        .padding(16)
-        .glassCard()
     }
 
-    private func practiceModeRow(
-        _ mode: SentenceOrderingMode,
-        subtitle: String
-    ) -> some View {
+    private func practiceModeRow(_ mode: SentenceOrderingMode) -> some View {
         NavigationLink {
             SentenceOrderingView(mode: mode)
         } label: {
-            HStack(spacing: 12) {
-                Image(systemName: mode.icon)
-                    .font(.title3.weight(.semibold))
-                    .foregroundStyle(.white)
-                    .frame(width: 42, height: 42)
-                    .background(Circle().fill(AppTheme.buttonGradient))
+            HStack(spacing: 14) {
+                Image(systemName: mode == .listening ? "headphones" : "doc.text")
+                    .font(.system(size: 24, weight: .semibold))
+                    .foregroundStyle(Color(red: 0.35, green: 0.92, blue: 1.0))
+                    .frame(width: 48, height: 48)
+                    .background(
+                        RoundedRectangle(cornerRadius: 13, style: .continuous)
+                            .fill(
+                                LinearGradient(
+                                    colors: [
+                                        Color(red: 0.04, green: 0.45, blue: 0.82),
+                                        Color(red: 0.13, green: 0.22, blue: 0.58),
+                                    ],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
+                    )
 
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(mode.title)
-                        .font(.headline)
-                        .foregroundStyle(AppTheme.primaryText)
-                    Text(subtitle)
-                        .font(.caption)
-                        .foregroundStyle(AppTheme.secondaryText)
-                }
+                Text(mode.title)
+                    .font(.headline)
+                    .foregroundStyle(AppTheme.primaryText)
 
                 Spacer(minLength: 4)
 
                 Image(systemName: "chevron.right")
-                    .font(.caption.weight(.bold))
-                    .foregroundStyle(AppTheme.tertiaryText)
+                    .font(.subheadline.weight(.bold))
+                    .foregroundStyle(.white.opacity(0.72))
+                    .frame(width: 34, height: 34)
+                    .background(Circle().fill(Color.white.opacity(0.10)))
             }
             .padding(12)
             .background(
-                RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .fill(AppTheme.elevatedBackground)
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .fill(Color(red: 0.025, green: 0.16, blue: 0.27))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .strokeBorder(Color.cyan.opacity(0.15), lineWidth: 1)
             )
         }
         .buttonStyle(.plain)
     }
 
-    private func sectionHeading(_ title: String) -> some View {
-        Text(title)
-            .font(.title3.bold())
-            .foregroundStyle(AppTheme.primaryText)
+    private func sectionHeading(_ title: String, icon: String) -> some View {
+        HStack(spacing: 12) {
+            Image(systemName: icon)
+                .font(.title2.weight(.medium))
+                .foregroundStyle(Color(red: 0.12, green: 0.93, blue: 0.93))
+                .frame(width: 32)
+            Text(title)
+                .font(.title3.bold())
+                .foregroundStyle(AppTheme.primaryText)
+        }
     }
 
     // MARK: - AIチューター
 
     private var aiTutorSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            sectionHeading("会話練習")
-            chatEntryButton
-            chatGuideLink
+        VStack(alignment: .leading, spacing: 12) {
+            sectionHeading("会話練習", icon: "bubble.left")
+
+            VStack(alignment: .leading, spacing: 16) {
+                chatEntryButton
+
+                Text("日本語で質問して大丈夫。\n知りたい表現を聞いてみよう。")
+                    .font(.body)
+                    .foregroundStyle(AppTheme.primaryText)
+                    .lineSpacing(4)
+
+                Divider()
+                    .overlay(Color.white.opacity(0.10))
+
+                chatGuideLink
+            }
+            .padding(16)
+            .background(
+                RoundedRectangle(cornerRadius: 20, style: .continuous)
+                    .fill(Color(red: 0.020, green: 0.13, blue: 0.22))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 20, style: .continuous)
+                    .strokeBorder(Color.cyan.opacity(0.20), lineWidth: 1)
+            )
         }
     }
 
@@ -247,46 +295,64 @@ private struct HomeDashboardView: View {
 
     private var chatEntryButton: some View {
         NavigationLink(destination: ChatEntryView()) {
-            HStack {
-                Image("ShaoLong")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 30, height: 30)
-                    .background(Color.clear)
+            HStack(spacing: 14) {
+                Image(systemName: "bubble.left.and.bubble.right")
+                    .font(.system(size: 28, weight: .semibold))
+                    .foregroundStyle(.white)
+
                 Text("AIチューターとチャット")
-                    .fontWeight(.semibold)
+                    .font(.title3.weight(.bold))
+
                 Spacer()
+
                 Image(systemName: "chevron.right")
+                    .font(.headline.weight(.bold))
+                    .frame(width: 34, height: 34)
+                    .background(Circle().fill(Color.white.opacity(0.16)))
             }
-            .padding(16)
+            .padding(.horizontal, 18)
+            .padding(.vertical, 18)
             .background(
                 LinearGradient(
-                    colors: [Color.purple.opacity(0.7), Color.blue.opacity(0.7)],
+                    colors: [
+                        Color(red: 0.00, green: 0.65, blue: 1.00),
+                        Color(red: 0.02, green: 0.52, blue: 0.98),
+                    ],
                     startPoint: .leading,
                     endPoint: .trailing
                 )
             )
-            .foregroundColor(.white)
-            .cornerRadius(12)
+            .foregroundStyle(.white)
+            .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+            .shadow(color: Color.blue.opacity(0.28), radius: 12, y: 5)
         }
         .buttonStyle(.plain)
     }
 
-    /// チャットボタン直下の小さな説明リンク（中国語キーボードの追加方法など）
     private var chatGuideLink: some View {
-        NavigationLink(destination: ChatGuideView()) {
-            HStack(spacing: 4) {
+        Button {
+            showChatGuide = true
+        } label: {
+            HStack(spacing: 12) {
+                Image(systemName: "questionmark.circle")
+                    .font(.title2)
+                    .foregroundStyle(Color(red: 0.10, green: 0.60, blue: 1.0))
+
                 Text("中国語でチャットするには")
+                    .font(.subheadline)
+                    .foregroundStyle(AppTheme.secondaryText)
+
+                Spacer()
+
                 Image(systemName: "chevron.right")
-                    .font(.caption2)
+                    .font(.subheadline.weight(.bold))
+                    .foregroundStyle(Color(red: 0.48, green: 0.45, blue: 0.92))
             }
-            .font(.footnote)
-            .foregroundStyle(AppTheme.secondaryText)
-            .frame(maxWidth: .infinity, alignment: .trailing)
-            .padding(.horizontal, 4)
-            .frame(minHeight: 32)
+            .frame(maxWidth: .infinity, minHeight: 44)
+            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+        .accessibilityLabel("中国語でチャットするには")
     }
 
     // MARK: - 共通カード
@@ -329,40 +395,70 @@ private struct LevelCard: View {
     let count: Int
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(level.label)
-                .font(.title2.bold())
+        HStack(spacing: 8) {
+            Image(systemName: "book.fill")
+                .font(.system(size: 21, weight: .semibold))
+                .foregroundStyle(iconForeground)
+                .frame(width: 46, height: 46)
+                .background(
+                    RoundedRectangle(cornerRadius: 13, style: .continuous)
+                        .fill(iconGradient)
+                )
+                .shadow(color: accentColor.opacity(0.28), radius: 8, y: 3)
+
+            Text(level.label.replacingOccurrences(of: "HSK", with: "HSK "))
+                .font(.subheadline.bold())
                 .foregroundStyle(AppTheme.primaryText)
-            Text("\(count) 単語")
-                .font(.caption)
-                .foregroundStyle(AppTheme.secondaryText)
-            Spacer(minLength: 8)
-            HStack {
-                Spacer()
-                Image(systemName: "rectangle.stack.fill")
-                    .font(.title2)
-                    .foregroundStyle(accentColor)
-            }
+                .lineLimit(1)
+                .minimumScaleFactor(0.82)
+                .layoutPriority(1)
+
+            Spacer(minLength: 0)
+
+            Image(systemName: "chevron.right")
+                .font(.subheadline.weight(.bold))
+                .foregroundStyle(.white)
+                .frame(width: 30, height: 30)
+                .background(Circle().fill(Color.white.opacity(0.10)))
         }
-        .padding(16)
-        .frame(maxWidth: .infinity, minHeight: 84, alignment: .topLeading)
-        .glassCard()
+        .padding(10)
+        .frame(maxWidth: .infinity, minHeight: 68)
+        .background(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(Color(red: 0.025, green: 0.15, blue: 0.25))
+        )
         .overlay(
             RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .strokeBorder(accentColor.opacity(0.40), lineWidth: 1)
+                .strokeBorder(accentColor.opacity(0.22), lineWidth: 1)
+        )
+    }
+
+    private var iconForeground: Color {
+        switch level {
+        case .hsk1: return Color(red: 0.40, green: 1.00, blue: 0.80)
+        case .hsk2: return Color(red: 0.58, green: 0.85, blue: 1.00)
+        case .hsk3: return Color(red: 1.00, green: 0.82, blue: 0.45)
+        case .hsk4: return Color(red: 1.00, green: 0.64, blue: 0.70)
+        }
+    }
+
+    private var iconGradient: LinearGradient {
+        LinearGradient(
+            colors: [accentColor.opacity(0.78), accentColor.opacity(0.35)],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
         )
     }
 
     private var accentColor: Color {
         switch level {
-        case .hsk1: return Color(red: 0.55, green: 0.85, blue: 0.65)
-        case .hsk2: return Color(red: 0.40, green: 0.65, blue: 1.0)
-        case .hsk3: return Color(red: 1.0, green: 0.65, blue: 0.30)
-        case .hsk4: return Color(red: 1.0, green: 0.40, blue: 0.45)
+        case .hsk1: return Color(red: 0.05, green: 0.75, blue: 0.52)
+        case .hsk2: return Color(red: 0.05, green: 0.45, blue: 0.95)
+        case .hsk3: return Color(red: 0.90, green: 0.48, blue: 0.10)
+        case .hsk4: return Color(red: 0.90, green: 0.25, blue: 0.35)
         }
     }
 }
-
 
 enum HomeTab: Hashable {
     case home
@@ -415,7 +511,8 @@ private struct WordDeckTabView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                AppTheme.background.ignoresSafeArea()
+                wordTabBackground
+                    .ignoresSafeArea()
                 VStack(spacing: 0) {
                     ScrollView {
                         VStack(alignment: .leading, spacing: 20) {
@@ -481,7 +578,8 @@ private struct WordDeckTabView: View {
                     }
                 }
             }
-            .navigationTitle("単語カード")
+            .navigationTitle("単語・例文")
+            .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(.hidden, for: .navigationBar)
             .toolbarColorScheme(.dark, for: .navigationBar)
             .toolbar {
@@ -498,6 +596,18 @@ private struct WordDeckTabView: View {
         }
     }
 
+    private var wordTabBackground: LinearGradient {
+        LinearGradient(
+            colors: [
+                Color(red: 0.015, green: 0.070, blue: 0.120),
+                Color(red: 0.010, green: 0.105, blue: 0.175),
+                Color(red: 0.010, green: 0.055, blue: 0.095),
+            ],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+    }
+
     private func featureRow(
         icon: String,
         title: String,
@@ -509,8 +619,11 @@ private struct WordDeckTabView: View {
                 .font(.system(size: 26, weight: .semibold))
                 .foregroundStyle(.white)
                 .frame(width: 54, height: 54)
-                .background(Circle().fill(gradient))
-                .shadow(color: AppTheme.accent.opacity(0.35), radius: 8, y: 3)
+                .background(
+                    RoundedRectangle(cornerRadius: 15, style: .continuous)
+                        .fill(gradient)
+                )
+                .shadow(color: Color.cyan.opacity(0.18), radius: 8, y: 3)
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
                     .font(.headline)
@@ -525,7 +638,14 @@ private struct WordDeckTabView: View {
         }
         .padding(16)
         .frame(maxWidth: .infinity)
-        .glassCard()
+        .background(
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .fill(Color(red: 0.025, green: 0.15, blue: 0.25))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .strokeBorder(Color.cyan.opacity(0.14), lineWidth: 1)
+        )
     }
 }
 
@@ -535,14 +655,10 @@ private struct OrderingModeTabView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                AppTheme.background.ignoresSafeArea()
+                orderingTabBackground
+                    .ignoresSafeArea()
                 VStack(spacing: 0) {
                     VStack(alignment: .leading, spacing: 14) {
-                        Text("中国語の文を、聞いて・読んで並び替える")
-                            .font(.subheadline)
-                            .foregroundStyle(AppTheme.secondaryText)
-                            .padding(.bottom, 4)
-
                         orderingLink(.listening)
                         orderingLink(.japanese)
                         Spacer()
@@ -557,9 +673,22 @@ private struct OrderingModeTabView: View {
                 }
             }
             .navigationTitle("並び替え練習")
+            .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(.hidden, for: .navigationBar)
             .toolbarColorScheme(.dark, for: .navigationBar)
         }
+    }
+
+    private var orderingTabBackground: LinearGradient {
+        LinearGradient(
+            colors: [
+                Color(red: 0.015, green: 0.070, blue: 0.120),
+                Color(red: 0.010, green: 0.105, blue: 0.175),
+                Color(red: 0.010, green: 0.055, blue: 0.095),
+            ],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
     }
 
     private func orderingLink(_ mode: SentenceOrderingMode) -> some View {
@@ -567,20 +696,42 @@ private struct OrderingModeTabView: View {
             SentenceOrderingView(mode: mode)
         } label: {
             HStack(spacing: 12) {
-                Image(systemName: mode.icon)
-                    .font(.title3.weight(.semibold))
-                    .foregroundStyle(.white)
-                    .frame(width: 44, height: 44)
-                    .background(Circle().fill(AppTheme.buttonGradient))
+                Image(systemName: mode == .listening ? "headphones" : "doc.text")
+                    .font(.system(size: 24, weight: .semibold))
+                    .foregroundStyle(Color(red: 0.35, green: 0.92, blue: 1.0))
+                    .frame(width: 48, height: 48)
+                    .background(
+                        RoundedRectangle(cornerRadius: 13, style: .continuous)
+                            .fill(
+                                LinearGradient(
+                                    colors: [
+                                        Color(red: 0.04, green: 0.45, blue: 0.82),
+                                        Color(red: 0.13, green: 0.22, blue: 0.58),
+                                    ],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
+                    )
                 Text(mode.title)
                     .font(.headline)
                     .foregroundStyle(AppTheme.primaryText)
                 Spacer()
                 Image(systemName: "chevron.right")
-                    .foregroundStyle(AppTheme.tertiaryText)
+                    .font(.subheadline.weight(.bold))
+                    .foregroundStyle(.white.opacity(0.72))
+                    .frame(width: 34, height: 34)
+                    .background(Circle().fill(Color.white.opacity(0.10)))
             }
-            .padding(14)
-            .glassCard()
+            .padding(12)
+            .background(
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .fill(Color(red: 0.025, green: 0.16, blue: 0.27))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .strokeBorder(Color.cyan.opacity(0.15), lineWidth: 1)
+            )
         }
         .buttonStyle(.plain)
     }

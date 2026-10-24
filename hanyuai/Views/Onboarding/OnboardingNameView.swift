@@ -13,29 +13,33 @@ struct OnboardingNameView: View {
     }
 
     var body: some View {
-        VStack(spacing: 28) {
-            Spacer()
+        VStack(alignment: .leading, spacing: 0) {
+            OnboardingBrand()
+                .padding(.top, 28)
 
-            VStack(spacing: 12) {
-                Text("なんて呼べばいい？")
-                    .font(.title.bold())
-                    .foregroundStyle(AppTheme.primaryText)
-                Text("チャット中にこの名前で呼びかけます")
-                    .font(.subheadline)
-                    .foregroundStyle(AppTheme.secondaryText)
-            }
+            Spacer(minLength: 48)
+
+            Text("なんて呼べばいい？")
+                .font(.system(size: 27, weight: .bold))
+                .foregroundStyle(.white)
+
+            Text("AIチューターが、この名前で呼びかけます")
+                .font(.subheadline)
+                .foregroundStyle(.white.opacity(0.72))
+                .padding(.top, 10)
+                .padding(.bottom, 34)
 
             TextField("あなたの名前", text: $draftName)
                 .textFieldStyle(.plain)
-                .padding(14)
-                .background(AppTheme.cardBackground)
-                .foregroundStyle(AppTheme.primaryText)
-                .cornerRadius(12)
+                .font(.body)
+                .padding(.horizontal, 18)
+                .frame(height: 58)
+                .background(OnboardingStyle.cardFill)
+                .foregroundStyle(.white)
                 .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .strokeBorder(AppTheme.cardStroke, lineWidth: 0.5)
+                    RoundedRectangle(cornerRadius: 15, style: .continuous)
+                        .strokeBorder(OnboardingStyle.cyan, lineWidth: 1.5)
                 )
-                .padding(.horizontal, 32)
                 .focused($isFocused)
                 .submitLabel(.done)
                 .onSubmit(saveAndProceed)
@@ -45,14 +49,14 @@ struct OnboardingNameView: View {
             Button(action: saveAndProceed) {
                 Text("次へ")
             }
-            .primaryButtonBackground()
-            .padding(.horizontal, 32)
+            .onboardingPrimaryButton()
             .padding(.bottom, 60)
             .opacity(trimmedName.isEmpty ? 0.4 : 1.0)
             .disabled(trimmedName.isEmpty)
         }
+        .padding(.horizontal, 24)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(AppTheme.background.ignoresSafeArea())
+        .background(OnboardingStyle.background.ignoresSafeArea())
         .onAppear { isFocused = true }
     }
 

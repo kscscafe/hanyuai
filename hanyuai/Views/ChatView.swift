@@ -102,12 +102,23 @@ struct ChatView: View {
                         if isLoading {
                             TypingIndicator()
                         }
+
+                        // 初回表示・新着時にスクロールするための末尾基準点
+                        Color.clear
+                            .frame(height: 1)
+                            .id("chat-bottom")
                     }
                     .padding(16)
                 }
+                .onAppear {
+                    // 保存済み履歴がレイアウトされた後、最新メッセージを表示する
+                    DispatchQueue.main.async {
+                        proxy.scrollTo("chat-bottom", anchor: .bottom)
+                    }
+                }
                 .onChange(of: currentMessages.count) { _, _ in
-                    if let last = currentMessages.last {
-                        withAnimation { proxy.scrollTo(last.id, anchor: .bottom) }
+                    withAnimation {
+                        proxy.scrollTo("chat-bottom", anchor: .bottom)
                     }
                 }
             }

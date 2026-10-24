@@ -1,44 +1,58 @@
 import SwiftUI
 
-/// オンボーディング 3/3: キャラ紹介ページ。
+/// オンボーディング 3/3: AIチューター選択ページ。
 struct OnboardingCharacterView: View {
+    @Binding var selectedCharacter: ChatCharacter
     let onStart: () -> Void
 
     var body: some View {
-        VStack(spacing: 20) {
-            Text("チューターはこの3人")
-                .font(.title2.bold())
-                .foregroundStyle(AppTheme.primaryText)
-                .padding(.top, 32)
+        VStack(alignment: .leading, spacing: 0) {
+            OnboardingBrand()
+                .padding(.top, 28)
 
-            Text("最初に話す相手はあとから選べます")
+            Spacer(minLength: 28)
+
+            Text("AIチューターを選ぶ")
+                .font(.system(size: 27, weight: .bold))
+                .foregroundStyle(.white)
+
+            Text("話す相手は、あとから変更できます")
                 .font(.subheadline)
-                .foregroundStyle(AppTheme.secondaryText)
+                .foregroundStyle(.white.opacity(0.72))
+                .padding(.top, 8)
+                .padding(.bottom, 22)
 
-            ScrollView {
-                VStack(spacing: 14) {
-                    ForEach(ChatCharacter.allCases) { character in
-                        CharacterIntroRow(character: character)
+            VStack(spacing: 12) {
+                ForEach(ChatCharacter.allCases) { character in
+                    Button {
+                        selectedCharacter = character
+                    } label: {
+                        CharacterIntroRow(
+                            character: character,
+                            isSelected: selectedCharacter == character
+                        )
                     }
+                    .buttonStyle(.plain)
                 }
-                .padding(.horizontal, 20)
-                .padding(.vertical, 8)
             }
+
+            Spacer()
 
             Button(action: onStart) {
                 Text("はじめる")
             }
-            .primaryButtonBackground()
-            .padding(.horizontal, 32)
+            .onboardingPrimaryButton()
             .padding(.bottom, 60)
         }
+        .padding(.horizontal, 24)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(AppTheme.background.ignoresSafeArea())
+        .background(OnboardingStyle.background.ignoresSafeArea())
     }
 }
 
 private struct CharacterIntroRow: View {
     let character: ChatCharacter
+    let isSelected: Bool
 
     private var oneLiner: String {
         switch character {
@@ -53,29 +67,46 @@ private struct CharacterIntroRow: View {
             Image(character.avatarImageName)
                 .resizable()
                 .scaledToFill()
-                .frame(width: 64, height: 64)
+                .frame(width: 58, height: 58)
                 .clipShape(Circle())
 
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 5) {
                 Text("\(character.nameJP)（\(character.displayName)）")
-                    .font(.headline)
-                    .foregroundStyle(AppTheme.primaryText)
-                Text(character.hometownLabel)
-                    .font(.caption)
-                    .foregroundStyle(AppTheme.tertiaryText)
+                    .font(.subheadline.bold())
+                    .foregroundStyle(.white)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.82)
                 Text(oneLiner)
                     .font(.caption)
-                    .foregroundStyle(AppTheme.secondaryText)
+                    .foregroundStyle(.white.opacity(0.72))
                     .lineLimit(2)
             }
-            Spacer()
+
+            Spacer(minLength: 8)
+
+            Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                .font(.title2)
+                .foregroundStyle(isSelected ? OnboardingStyle.cyan : .white.opacity(0.35))
         }
         .padding(14)
         .frame(maxWidth: .infinity)
-        .glassCard()
+        .background(
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .fill(OnboardingStyle.cardFill)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .strokeBorder(
+                    isSelected ? OnboardingStyle.cyan : OnboardingStyle.cardStroke,
+                    lineWidth: isSelected ? 1.5 : 1
+                )
+        )
     }
 }
 
 #Preview {
-    OnboardingCharacterView(onStart: {})
+    OnboardingCharacterView(
+        selectedCharacter: .constant(.lin),
+        onStart: {}
+    )
 }
