@@ -30,12 +30,6 @@ private struct HomeDashboardView: View {
                             }
 
                             sentencePracticeSection
-                            diagnosisCard
-                            favoritesCard
-
-                            if !profile.hasAnyOptionalProfile {
-                                profilePromptBanner
-                            }
                         }
                         .padding(.horizontal, 20)
                         .padding(.top, 12)
