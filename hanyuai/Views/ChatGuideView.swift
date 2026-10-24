@@ -66,7 +66,7 @@ struct ChatGuideView: View {
             Image("ShaoLong")
                 .resizable()
                 .scaledToFit()
-                .frame(width: 60, height: 60)
+                .frame(width: 84, height: 84)
             VStack(alignment: .leading, spacing: 2) {
                 Text("小龍（シャオロン）")
                     .font(.caption)
