@@ -503,7 +503,8 @@ private struct WordDeckTabView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                AppTheme.background.ignoresSafeArea()
+                wordTabBackground
+                    .ignoresSafeArea()
                 VStack(spacing: 0) {
                     ScrollView {
                         VStack(alignment: .leading, spacing: 20) {
@@ -569,7 +570,8 @@ private struct WordDeckTabView: View {
                     }
                 }
             }
-            .navigationTitle("単語カード")
+            .navigationTitle("単語・例文")
+            .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(.hidden, for: .navigationBar)
             .toolbarColorScheme(.dark, for: .navigationBar)
             .toolbar {
@@ -586,6 +588,18 @@ private struct WordDeckTabView: View {
         }
     }
 
+    private var wordTabBackground: LinearGradient {
+        LinearGradient(
+            colors: [
+                Color(red: 0.015, green: 0.070, blue: 0.120),
+                Color(red: 0.010, green: 0.105, blue: 0.175),
+                Color(red: 0.010, green: 0.055, blue: 0.095),
+            ],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+    }
+
     private func featureRow(
         icon: String,
         title: String,
@@ -597,8 +611,11 @@ private struct WordDeckTabView: View {
                 .font(.system(size: 26, weight: .semibold))
                 .foregroundStyle(.white)
                 .frame(width: 54, height: 54)
-                .background(Circle().fill(gradient))
-                .shadow(color: AppTheme.accent.opacity(0.35), radius: 8, y: 3)
+                .background(
+                    RoundedRectangle(cornerRadius: 15, style: .continuous)
+                        .fill(gradient)
+                )
+                .shadow(color: Color.cyan.opacity(0.18), radius: 8, y: 3)
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
                     .font(.headline)
@@ -613,7 +630,14 @@ private struct WordDeckTabView: View {
         }
         .padding(16)
         .frame(maxWidth: .infinity)
-        .glassCard()
+        .background(
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .fill(Color(red: 0.025, green: 0.15, blue: 0.25))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .strokeBorder(Color.cyan.opacity(0.14), lineWidth: 1)
+        )
     }
 }
 
@@ -623,14 +647,10 @@ private struct OrderingModeTabView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                AppTheme.background.ignoresSafeArea()
+                orderingTabBackground
+                    .ignoresSafeArea()
                 VStack(spacing: 0) {
                     VStack(alignment: .leading, spacing: 14) {
-                        Text("中国語の文を、聞いて・読んで並び替える")
-                            .font(.subheadline)
-                            .foregroundStyle(AppTheme.secondaryText)
-                            .padding(.bottom, 4)
-
                         orderingLink(.listening)
                         orderingLink(.japanese)
                         Spacer()
@@ -645,9 +665,22 @@ private struct OrderingModeTabView: View {
                 }
             }
             .navigationTitle("並び替え練習")
+            .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(.hidden, for: .navigationBar)
             .toolbarColorScheme(.dark, for: .navigationBar)
         }
+    }
+
+    private var orderingTabBackground: LinearGradient {
+        LinearGradient(
+            colors: [
+                Color(red: 0.015, green: 0.070, blue: 0.120),
+                Color(red: 0.010, green: 0.105, blue: 0.175),
+                Color(red: 0.010, green: 0.055, blue: 0.095),
+            ],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
     }
 
     private func orderingLink(_ mode: SentenceOrderingMode) -> some View {
@@ -655,20 +688,42 @@ private struct OrderingModeTabView: View {
             SentenceOrderingView(mode: mode)
         } label: {
             HStack(spacing: 12) {
-                Image(systemName: mode.icon)
-                    .font(.title3.weight(.semibold))
-                    .foregroundStyle(.white)
-                    .frame(width: 44, height: 44)
-                    .background(Circle().fill(AppTheme.buttonGradient))
+                Image(systemName: mode == .listening ? "headphones" : "doc.text")
+                    .font(.system(size: 24, weight: .semibold))
+                    .foregroundStyle(Color(red: 0.35, green: 0.92, blue: 1.0))
+                    .frame(width: 48, height: 48)
+                    .background(
+                        RoundedRectangle(cornerRadius: 13, style: .continuous)
+                            .fill(
+                                LinearGradient(
+                                    colors: [
+                                        Color(red: 0.04, green: 0.45, blue: 0.82),
+                                        Color(red: 0.13, green: 0.22, blue: 0.58),
+                                    ],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
+                    )
                 Text(mode.title)
                     .font(.headline)
                     .foregroundStyle(AppTheme.primaryText)
                 Spacer()
                 Image(systemName: "chevron.right")
-                    .foregroundStyle(AppTheme.tertiaryText)
+                    .font(.subheadline.weight(.bold))
+                    .foregroundStyle(.white.opacity(0.72))
+                    .frame(width: 34, height: 34)
+                    .background(Circle().fill(Color.white.opacity(0.10)))
             }
-            .padding(14)
-            .glassCard()
+            .padding(12)
+            .background(
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .fill(Color(red: 0.025, green: 0.16, blue: 0.27))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .strokeBorder(Color.cyan.opacity(0.15), lineWidth: 1)
+            )
         }
         .buttonStyle(.plain)
     }
