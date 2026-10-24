@@ -55,6 +55,7 @@ struct ChatGuideView: View {
         }
         .navigationTitle("中国語でチャットするには")
         .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden(true)
         .toolbarColorScheme(.dark, for: .navigationBar)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
