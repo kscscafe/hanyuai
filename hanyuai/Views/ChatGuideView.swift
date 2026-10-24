@@ -9,6 +9,8 @@ import SwiftUI
 import FirebaseAnalytics
 
 struct ChatGuideView: View {
+    @Environment(\.dismiss) private var dismiss
+
     var body: some View {
         ZStack {
             AppTheme.background.ignoresSafeArea()
@@ -54,6 +56,17 @@ struct ChatGuideView: View {
         .navigationTitle("中国語でチャットするには")
         .navigationBarTitleDisplayMode(.inline)
         .toolbarColorScheme(.dark, for: .navigationBar)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    dismiss()
+                } label: {
+                    Image(systemName: "xmark")
+                        .font(.body.weight(.semibold))
+                }
+                .accessibilityLabel("閉じる")
+            }
+        }
         .onAppear {
             Analytics.logEvent("chat_guide_opened", parameters: nil)
         }
